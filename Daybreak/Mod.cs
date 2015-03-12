@@ -25,7 +25,9 @@ namespace Daybreak
 
         public override void OnLevelLoaded(LoadMode mode)
         {
-            
+            GameObject go = new GameObject();
+            go.AddComponent<RenderingController>();
+            go.AddComponent<DebugMenu>();
         }
 
     }
