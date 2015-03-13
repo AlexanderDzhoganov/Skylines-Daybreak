@@ -47,6 +47,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CameraHook.cs" />
     <Compile Include="DebugMenu.cs" />
     <Compile Include="HeadlightsController.cs" />
     <Compile Include="Mod.cs" />

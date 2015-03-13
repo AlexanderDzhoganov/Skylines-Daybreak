@@ -10,8 +10,6 @@ namespace Daybreak
 
         public static bool HeadlightsStateByTimeOfDay(TimeOfDay timeOfDay)
         {
-            return false;
-
             switch (timeOfDay)
             {
                 case TimeOfDay.Sunset:
@@ -26,13 +24,29 @@ namespace Daybreak
         private Timer timer;
         private bool headlightsState = false;
 
-        List<Light> activeHeadlights = new List<Light>();
+        public List<LightSource> activeHeadlights = new List<LightSource>();
+
+        private bool fadingInHeadlights = false;
+        private bool fadingOutHeadlights = false;
+        private float fadingHeadlightsFactor = 1.0f;
 
         void Awake()
         {
         }
 
-        void Update()
+        void FadeInHeadlights()
+        {
+            fadingInHeadlights = true;
+            fadingOutHeadlights = false;
+        }
+
+        void FadeOutHeadlights()
+        {
+            fadingOutHeadlights = true;
+            fadingInHeadlights = false;
+        }
+
+        void LateUpdate()
         {
             timer = GetComponent<Timer>();
 
@@ -41,16 +55,37 @@ namespace Daybreak
             {
                 if (state)
                 {
+                    FadeInHeadlights();
                 }
                 else
                 {
-                    RemoveAllHeadlights();          
+                    FadeOutHeadlights();
                 }
 
                 headlightsState = state;
             }
 
-            if (headlightsState)
+            if (fadingInHeadlights)
+            {
+                fadingHeadlightsFactor += Time.deltaTime;
+                if (fadingHeadlightsFactor >= 1.0f)
+                {
+                    fadingHeadlightsFactor = 1.0f;
+                    fadingInHeadlights = false;
+                }
+            }
+            else if (fadingOutHeadlights)
+            {
+                fadingHeadlightsFactor -= Time.deltaTime;
+                if (fadingHeadlightsFactor <= 0.0f)
+                {
+                    fadingHeadlightsFactor = 0.0f;
+                    fadingOutHeadlights = false;
+                    RemoveAllHeadlights();
+                }
+            }
+
+            if (fadingInHeadlights || fadingOutHeadlights || headlightsState)
             {
                 try
                 {
@@ -78,25 +113,27 @@ namespace Daybreak
         public float debugDisplacement = 1.0f;
         public float debugSideOffset = 0.8f;
 
-        Light FetchLight(LightType type, Color color, float intensity, float range, float spotAngle = 0.0f)
+        LightSource FetchLight(LightType type, Color color, float intensity, float range, float spotAngle = 0.0f)
         {
+            LightSource light = null;
+
             if (activeHeadlights.Count == 0)
             {
-                var go = new GameObject();
-                var newLight = go.AddComponent<Light>();
-                newLight.renderMode = LightRenderMode.ForcePixel;
-                newLight.shadows = LightShadows.None;
-                activeHeadlights.Add(newLight);
+                light = Singleton<RenderManager>.instance.ObtainLightSource();
+            }
+            else
+            {
+                light = activeHeadlights[0];
+                activeHeadlights.RemoveAt(0);
             }
 
-            var light = activeHeadlights[0];
-            light.intensity = intensity;
-            light.type = type;
-            light.color = color;
-            light.range = range;
-            light.spotAngle = spotAngle;
+            light.m_light.intensity = intensity*fadingHeadlightsFactor;
+            light.m_light.type = type;
+            light.m_light.color = color;
+            light.m_light.range = range;
+            light.m_light.spotAngle = spotAngle;
+            light.m_light.shadows = LightShadows.None;
 
-            activeHeadlights.RemoveAt(0);
             return light;
         }
 
@@ -104,18 +141,17 @@ namespace Daybreak
         {
             VehicleManager vManager = Singleton<VehicleManager>.instance;
 
-            List<Light> used = new List<Light>();
+            List<LightSource> used = new List<LightSource>();
 
             for (int i = 0; i < vManager.m_vehicles.m_buffer.Length; i++)
             {
                 Vehicle v = vManager.m_vehicles.m_buffer[i];
-
-                if ((v.m_flags & Vehicle.Flags.Spawned) == 0)
+                if (v.m_flags == Vehicle.Flags.None || v.Info == null)
                 {
                     continue;
                 }
 
-                if (v.Info == null)
+                if ((v.m_flags & Vehicle.Flags.Spawned) == 0)
                 {
                     continue;
                 }

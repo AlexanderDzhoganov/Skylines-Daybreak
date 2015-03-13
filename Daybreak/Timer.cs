@@ -5,7 +5,7 @@ namespace Daybreak
     public class Timer : MonoBehaviour
     {
 
-        public float secondsPerTimeOfDay = 20.0f;
+        public float secondsPerTimeOfDay = 10.0f;
         public bool timerRunning = true;
 
         private TimeOfDay timeOfDay = TimeOfDay.Sunrise;

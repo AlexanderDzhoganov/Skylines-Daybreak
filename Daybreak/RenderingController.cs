@@ -5,14 +5,12 @@ namespace Daybreak
     public class RenderingController : MonoBehaviour
     {
 
+        private CameraHook hook;
+
         void Awake()
         {
-           
-        }
-
-        void Update()
-        {
-            
+            var controller = FindObjectOfType<CameraController>();
+            hook = controller.gameObject.AddComponent<CameraHook>();
         }
 
     }

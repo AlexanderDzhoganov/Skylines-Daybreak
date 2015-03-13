@@ -9,26 +9,33 @@ namespace Daybreak
     {
 
         private Rect windowRect = new Rect(128, 128, 360, 600);
-        private bool show = true;
+        private bool showUI = true;
         private Vector2 scrollViewPos = Vector2.zero;
 
         private Timer timer;
         private HeadlightsController headlights;
+        private FogEffect fogEffect;
+
         void Awake()
         {
             timer = GetComponent<Timer>();
         }
 
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.F6))
+            {
+                showUI = !showUI;
+            }
+        }
+
         void OnGUI()
         {
-            if (show)
-            {
-                windowRect = GUI.Window(152512, windowRect, DrawDebugWindow, "Daybreak debug menu");
-            }
+            
 
-            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.L))
+            if (showUI)
             {
-                show = !show;
+                windowRect = GUI.Window(1626212, windowRect, DrawDebugWindow, "Daybreak debug menu");
             }
         }
 
@@ -44,6 +51,15 @@ namespace Daybreak
                 return;
             }
 
+            if (fogEffect == null)
+            {
+                fogEffect = FindObjectOfType<FogEffect>();
+            }
+
+            if (fogEffect == null)
+            {
+                return;
+            }
             scrollViewPos = GUILayout.BeginScrollView(scrollViewPos);
 
            /* GUILayout.Label("Lights");
@@ -61,6 +77,104 @@ namespace Daybreak
                 GUILayout.Space(4);
             }
             */
+
+            /*
+  public Color m_3DFogColor = Color.white;
+  public float m_3DNoiseScale = 0.01f;
+  public Color m_PollutionColor = Color.white;
+  public float m_PollutionIntensityWater = 2f;
+  public float m_PollutionIntensity = 1f;
+  public float m_FogPatternChangeSpeed = 0.5f;
+  public Color m_InscatteringColor = Color.white;
+  public float m_InscateringExponent = 15f;
+  public float m_InscatteringIntensity = 2f;
+  public float m_InscatteringStartDistance = 400f;
+  public float m_InscatteringTransitionSoftness = 1f;
+  private float m_LastSimTime = -1f;
+  public Shader m_fogShader;
+  [Range(0.0f, 3800f)]
+  public float m_edgeFogDistance;
+  public Texture3D m_3DNoiseTexture;
+  public float m_NoiseContrast;
+  public float m_3DFogStart;
+  public float m_WindSpeed;*/
+            /*
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Edge Fog");
+            fogEffect.m_edgeFog = GUILayout.Toggle(fogEffect.m_edgeFog, "");
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Use volume fog");
+            fogEffect.m_UseVolumeFog = GUILayout.Toggle(fogEffect.m_UseVolumeFog, "");
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Fog height");
+            fogEffect.m_FogHeight = GUILayout.HorizontalSlider(fogEffect.m_FogHeight, 0.0f, 10000.0f);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Noise gain");
+            fogEffect.m_NoiseGain = GUILayout.HorizontalSlider(fogEffect.m_NoiseGain, 0.0f, 2.0f);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("3D fog amount");
+            fogEffect.m_3DFogAmount = GUILayout.HorizontalSlider(fogEffect.m_3DFogAmount, 0.0f, 2.0f);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("3D fog distance");
+            fogEffect.m_3DFogDistance = GUILayout.HorizontalSlider(fogEffect.m_3DFogDistance, 0.0f, 20.0f);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("3D noise step size");
+            fogEffect.m_3DNoiseStepSize = GUILayout.HorizontalSlider(fogEffect.m_3DNoiseStepSize, 0.0f, 8.0f);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Pollution intensity");
+            fogEffect.m_PollutionIntensity = GUILayout.HorizontalSlider(fogEffect.m_PollutionIntensity, 0.0f, 2.0f);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Inscattering exponent");
+            fogEffect.m_InscateringExponent = GUILayout.HorizontalSlider(fogEffect.m_InscateringExponent, 0.0f, 30.0f);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Inscattering intensity");
+            fogEffect.m_InscatteringIntensity = GUILayout.HorizontalSlider(fogEffect.m_InscatteringIntensity, 0.0f, 4.0f);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Inscattering start distance");
+            fogEffect.m_InscatteringStartDistance = GUILayout.HorizontalSlider(fogEffect.m_InscatteringStartDistance, 0.0f, 800.0f);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Inscattering start distance");
+            fogEffect.m_InscatteringTransitionSoftness = GUILayout.HorizontalSlider(fogEffect.m_InscatteringTransitionSoftness, 0.0f, 2.0f);
+            GUILayout.EndHorizontal();
+            */
+
+            if (fogEffect.m_Sun != null)
+            {
+                var pos = fogEffect.m_Sun.position;
+                pos.x = FloatField("x", pos.x);
+                pos.y = FloatField("y", pos.y);
+                pos.z = FloatField("z", pos.z);
+                fogEffect.m_Sun.position = pos;
+            }
+            else
+            {
+                var go = new GameObject();
+                fogEffect.m_Sun = go.transform;
+            }
+
+            ///////
             GUILayout.BeginHorizontal();
             GUILayout.Label("Range: ");
             headlights.debugRange = GUILayout.HorizontalSlider(headlights.debugRange, 0.0f, 16.0f, GUILayout.Width(120));
@@ -92,9 +206,11 @@ namespace Daybreak
             GUILayout.EndHorizontal();
 
             VehicleManager vManager = Singleton<VehicleManager>.instance;
+            GUILayout.Label("Vehicle count (ItemCount): " + vManager.m_vehicles.ItemCount());
             GUILayout.Label("Vehicle count: " + vManager.m_vehicleCount);
+            GUILayout.Label("Active headlights: " + headlights.activeHeadlights.Count);
 
-            var propManager = Singleton<PropManager>.instance;
+            var propManager = FindObjectOfType<PropManager>();
             GUILayout.Label("Prop count: " + propManager.m_propCount);
 
             GUILayout.Space(4);
@@ -108,6 +224,7 @@ namespace Daybreak
 
             GUILayout.Label("Time of day: " + timer.TimeOfDay);
             GUILayout.Label("T: " + timer.T);
+
 
             if (GUILayout.Button("export props"))
             {
@@ -165,21 +282,35 @@ namespace Daybreak
 
             if (GUILayout.Button("Fuck the system"))
             {
-                var renderers = FindObjectsOfType<MeshRenderer>();
-                foreach (var renderer in renderers)
-                {
-                    if (renderer.material.shader.name == "Custom/Buildings/Building/Default")
-                    {
-                        renderer.sharedMaterial.SetColor("_Color", Color.magenta);
-                        renderer.sharedMaterial.SetColor("_ColorV0", Color.magenta);
-                        renderer.sharedMaterial.SetColor("_ColorV1", Color.magenta);
-                        renderer.sharedMaterial.SetColor("_ColorV2", Color.magenta);
-                        renderer.sharedMaterial.SetColor("_ColorV3", Color.magenta);
-                    }
-                }
+                Shader.SetGlobalTexture("_EnvironmentCubemap", null);
+                Shader.SetGlobalColor("_EnvironmentFogColor", Color.black);
+
+                //var materials = Resources.FindObjectsOfTypeAll<Material>();
+                //foreach (var material in materials)
+                //{
+                  //  material.SetTexture("_EnvironmentCubemap", null);
+                  //  material.SetColor("_EnvironmentFogColor", Color.black);
+              //  }
             }
 
             GUILayout.EndScrollView();
+        }
+
+        float FloatField(string label, float x)
+        {
+            float res = x;
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(label + ": ");
+            string s = GUILayout.TextField(x.ToString("0.00"), GUILayout.Width(256));
+            float y;
+            if (float.TryParse(s, out y))
+            {
+                res = y;
+            }
+
+            GUILayout.EndHorizontal();
+
+            return res;
         }
 
     }
