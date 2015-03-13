@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using ColossalFramework;
+using ColossalFramework.IO;
 using UnityEngine;
 
 namespace Daybreak
@@ -62,7 +63,12 @@ namespace Daybreak
             }
             scrollViewPos = GUILayout.BeginScrollView(scrollViewPos);
 
-           /* GUILayout.Label("Lights");
+            GUILayout.Label("Camera position");
+            var c = Camera.main.transform.position;
+            GUILayout.Label(String.Format("x: {0}, y: {1}, z: {2}", c.x, c.y, c.z));
+
+            /* GUILayout.Label("Lights");
+
 
             var lights = FindObjectsOfType<Light>();
             foreach (var light in lights)
@@ -210,8 +216,8 @@ namespace Daybreak
             GUILayout.Label("Vehicle count: " + vManager.m_vehicleCount);
             GUILayout.Label("Active headlights: " + headlights.activeHeadlights.Count);
 
-            var propManager = Singleton<PropManager>.instance;
-            GUILayout.Label("Prop count: " + propManager.m_props.ItemCount());
+            var loadedProps = PrefabCollection<PropInfo>.LoadedCount();
+            GUILayout.Label("Loaded props: " + loadedProps);
 
             GUILayout.Space(4);
 
@@ -228,25 +234,32 @@ namespace Daybreak
 
             if (GUILayout.Button("export props"))
             {
-                
                 string t = "";
-                for (int i = 0; i < propManager.m_props.m_buffer.Length; i++)
+                for (int i = 0; i < loadedProps; i++)
                 {
-                    var prop = propManager.m_props.m_buffer[i];
+                    var info = PrefabCollection<PropInfo>.GetLoaded((uint)i);
+                    t += info.m_mesh.name + '\n';
 
-                    if (prop.Info == null)
-                    {
-                        continue;
-                    }
+                    var go = new GameObject();
+                    var effect = go.AddComponent<StreetLightEffectInfo>();
+                    effect.InitializeEffect();
 
-                    var mesh = propManager.m_props.m_buffer[i].Info.m_mesh;
-                    if (mesh != null)
+                    if (info.m_mesh.name == "street-light")
                     {
-                        t += "prop - " + mesh.name + '\n';
+                        info.m_alwaysActive = true;
+                     //   info.m_maxRenderDistance = float.MaxValue;
+                        info.m_hasEffects = true;
+                        
+                        info.m_effects = new PropInfo.Effect[1];
+                        info.m_effects[0] = new PropInfo.Effect();
+                        info.m_effects[0].m_effect = effect;
+                        info.m_effects[0].m_position = Vector3.zero;
+                        info.m_effects[0].m_direction = Vector3.right;
+                        Log.Message("Adding effect");
                     }
                 }
 
-                File.WriteAllText("C:\\Users\\nlight\\Desktop\\props.txt", t);
+               File.WriteAllText("C:\\Users\\nlight\\Desktop\\props.txt", t);
             }
 
             GUILayout.BeginHorizontal();
