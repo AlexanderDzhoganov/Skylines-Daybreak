@@ -52,7 +52,14 @@ namespace Daybreak
 
             if (headlightsState)
             {
-                UpdateAllHeadlights();
+                try
+                {
+                    UpdateAllHeadlights();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Exception: " + ex.Message);
+                }
             }
         }
 
@@ -108,6 +115,11 @@ namespace Daybreak
                     continue;
                 }
 
+                if (v.Info == null)
+                {
+                    continue;
+                }
+
                 if (v.Info.m_vehicleType != VehicleInfo.VehicleType.Car)
                 {
                     continue;
@@ -115,7 +127,7 @@ namespace Daybreak
 
                 Vector3 position = Vector3.zero;
                 Quaternion orientation = Quaternion.identity;
-                v.GetSmoothPosition(v.m_infoIndex, out position, out orientation);
+                v.GetSmoothPosition((ushort)i, out position, out orientation);
 
                 var leftHeadlight = FetchLight(LightType.Spot, Color.white, debugIntensity, debugRange, debugSpotAngle);
                 var rightHeadlight = FetchLight(LightType.Spot, Color.white, debugIntensity, debugRange, debugSpotAngle);
