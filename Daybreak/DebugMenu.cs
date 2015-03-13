@@ -210,8 +210,8 @@ namespace Daybreak
             GUILayout.Label("Vehicle count: " + vManager.m_vehicleCount);
             GUILayout.Label("Active headlights: " + headlights.activeHeadlights.Count);
 
-            var propManager = FindObjectOfType<PropManager>();
-            GUILayout.Label("Prop count: " + propManager.m_propCount);
+            var propManager = Singleton<PropManager>.instance;
+            GUILayout.Label("Prop count: " + propManager.m_props.ItemCount());
 
             GUILayout.Space(4);
 
@@ -230,8 +230,15 @@ namespace Daybreak
             {
                 
                 string t = "";
-                for (int i = 0; i < propManager.m_propCount; i++)
+                for (int i = 0; i < propManager.m_props.m_buffer.Length; i++)
                 {
+                    var prop = propManager.m_props.m_buffer[i];
+
+                    if (prop.Info == null)
+                    {
+                        continue;
+                    }
+
                     var mesh = propManager.m_props.m_buffer[i].Info.m_mesh;
                     if (mesh != null)
                     {
