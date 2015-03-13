@@ -93,9 +93,9 @@ namespace Daybreak
                 case TimeOfDay.Sunset:
                     return XKCDColors.FadedOrange * 0.3f;
                 case TimeOfDay.Night:
-                    return XKCDColors.DarkBlueGrey * 0.1f;
+                    return XKCDColors.Black;
                 case TimeOfDay.LateNight:
-                    return XKCDColors.AlmostBlack * 0.05f;
+                    return XKCDColors.Black;
             }
 
             return Color.magenta;
@@ -133,6 +133,9 @@ namespace Daybreak
 
             RenderSettings.ambientMode = AmbientMode.Flat;
             RenderSettings.ambientIntensity = GlobalAmbientIntensity;
+            RenderSettings.ambientGroundColor = Color.black;
+            RenderSettings.ambientSkyColor = Color.black;
+            RenderSettings.ambientEquatorColor = Color.black;
             RenderSettings.ambientLight = GetAmbientColorByTimeOfDay(timer.TimeOfDay, timer.T);
 
             light.color = GetSunColorByTimeOfDay(timer.TimeOfDay, timer.T);

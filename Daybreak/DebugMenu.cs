@@ -141,6 +141,44 @@ namespace Daybreak
 
             GUILayout.EndHorizontal();
 
+            if (GUILayout.Button("Turn off all lights"))
+            {
+                var lights = FindObjectsOfType<Light>();
+                foreach (var light in lights)
+                {
+                    light.enabled = false;
+                }
+            }
+
+            if (GUILayout.Button("Dump shaders"))
+            {
+                string s = "";
+
+                var materials = Resources.FindObjectsOfTypeAll<Material>();
+                foreach (var material in materials)
+                {
+                    s += material.name + " - " + material.shader.name + " - " + material.color.ToString() + '\n';
+                }
+
+                File.WriteAllText("C:\\Users\\nlight\\Desktop\\shaders.txt", s);
+            }
+
+            if (GUILayout.Button("Fuck the system"))
+            {
+                var renderers = FindObjectsOfType<MeshRenderer>();
+                foreach (var renderer in renderers)
+                {
+                    if (renderer.material.shader.name == "Custom/Buildings/Building/Default")
+                    {
+                        renderer.sharedMaterial.SetColor("_Color", Color.magenta);
+                        renderer.sharedMaterial.SetColor("_ColorV0", Color.magenta);
+                        renderer.sharedMaterial.SetColor("_ColorV1", Color.magenta);
+                        renderer.sharedMaterial.SetColor("_ColorV2", Color.magenta);
+                        renderer.sharedMaterial.SetColor("_ColorV3", Color.magenta);
+                    }
+                }
+            }
+
             GUILayout.EndScrollView();
         }
 
