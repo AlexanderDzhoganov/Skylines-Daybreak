@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using ColossalFramework.UI;
 using ICities;
 using UnityEngine;
@@ -32,6 +33,9 @@ namespace Daybreak
             go.AddComponent<Timer>();
             go.AddComponent<DebugMenu>();
             go.AddComponent<HeadlightsController>();
+
+            var controller = GameObject.FindObjectOfType<CameraController>();
+            GameObject.Destroy(controller.gameObject.GetComponent<FogEffect>());
         }
 
     }

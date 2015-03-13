@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.IO;
 using ColossalFramework;
 using UnityEngine;
 
@@ -79,7 +77,12 @@ namespace Daybreak
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Displacement: ");
-            headlights.debugDisplacement = GUILayout.HorizontalSlider(headlights.debugDisplacement, 0.0f, 16.0f, GUILayout.Width(120));
+            headlights.debugDisplacement = GUILayout.HorizontalSlider(headlights.debugDisplacement, -8.0f, 8.0f, GUILayout.Width(120));
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Side offset: ");
+            headlights.debugSideOffset = GUILayout.HorizontalSlider(headlights.debugSideOffset, 0.0f, 2.0f, GUILayout.Width(120));
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
@@ -90,6 +93,9 @@ namespace Daybreak
             VehicleManager vManager = Singleton<VehicleManager>.instance;
             GUILayout.Label("Vehicle count: " + vManager.m_vehicleCount);
 
+            var propManager = Singleton<PropManager>.instance;
+            GUILayout.Label("Prop count: " + propManager.m_propCount);
+
             GUILayout.Space(4);
 
             GUILayout.BeginHorizontal();
@@ -99,9 +105,24 @@ namespace Daybreak
 
             GUILayout.Label("Ambient color: " + RenderSettings.ambientLight.ToString());
 
-
             GUILayout.Label("Time of day: " + timer.TimeOfDay);
             GUILayout.Label("T: " + timer.T);
+
+            if (GUILayout.Button("export props"))
+            {
+                
+                string t = "";
+                for (int i = 0; i < propManager.m_propCount; i++)
+                {
+                    var mesh = propManager.m_props.m_buffer[i].Info.m_mesh;
+                    if (mesh != null)
+                    {
+                        t += "prop - " + mesh.name + '\n';
+                    }
+                }
+
+                File.WriteAllText("C:\\Users\\nlight\\Desktop\\props.txt", t);
+            }
 
             GUILayout.EndScrollView();
         }
