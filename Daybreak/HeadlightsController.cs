@@ -10,8 +10,6 @@ namespace Daybreak
 
         public static bool HeadlightsStateByTimeOfDay(TimeOfDay timeOfDay)
         {
-            return true;
-
             switch (timeOfDay)
             {
                 case TimeOfDay.Sunset:

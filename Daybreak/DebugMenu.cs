@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using ColossalFramework;
 using UnityEngine;
 
@@ -123,6 +124,22 @@ namespace Daybreak
 
                 File.WriteAllText("C:\\Users\\nlight\\Desktop\\props.txt", t);
             }
+
+            GUILayout.BeginHorizontal();
+            foreach (TimeOfDay timeOfDay in Enum.GetValues(typeof (TimeOfDay)))
+            {
+                if (GUILayout.Button(timeOfDay.ToString()))
+                {
+                    timer.ForceTimeOfDay(timeOfDay);
+                }
+            }
+
+            if (GUILayout.Button("Reset"))
+            {
+                timer.StopEnforcingTimeOfDay();
+            }
+
+            GUILayout.EndHorizontal();
 
             GUILayout.EndScrollView();
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using ColossalFramework;
 using ColossalFramework.UI;
 using ICities;
 using UnityEngine;
@@ -26,7 +27,6 @@ namespace Daybreak
 
         public override void OnLevelLoaded(LoadMode mode)
         {
-
             GameObject go = new GameObject();
             go.AddComponent<SunManager>();
             go.AddComponent<RenderingController>();
@@ -36,6 +36,8 @@ namespace Daybreak
 
             var controller = GameObject.FindObjectOfType<CameraController>();
             GameObject.Destroy(controller.gameObject.GetComponent<FogEffect>());
+            GameObject.Destroy(controller.gameObject.GetComponent("Bloom"));
+            GameObject.Destroy(controller.gameObject.GetComponent<FilmGrainEffect>());
         }
 
     }

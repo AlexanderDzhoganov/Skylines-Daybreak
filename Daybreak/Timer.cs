@@ -12,10 +12,29 @@ namespace Daybreak
 
         private float secondsUntilNextTimeOfDay = 0.0f;
 
+        private TimeOfDay forcedTimeOfDay = TimeOfDay.Sunrise;
+        private bool forceTimeOfDay = false;
+
+        public void ForceTimeOfDay(TimeOfDay timeOfDay)
+        {
+            forcedTimeOfDay = timeOfDay;
+            forceTimeOfDay = true;
+        }
+
+        public void StopEnforcingTimeOfDay()
+        {
+            forceTimeOfDay = false;
+        }
+
         public TimeOfDay TimeOfDay
         {
             get
             {
+                if (forceTimeOfDay)
+                {
+                    return forcedTimeOfDay;
+                }
+
                 return timeOfDay;
             }
         }
