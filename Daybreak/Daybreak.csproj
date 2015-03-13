@@ -52,7 +52,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderingController.cs" />
     <Compile Include="SunManager.cs" />
+    <Compile Include="Timer.cs" />
     <Compile Include="TimeUtil.cs" />
+    <Compile Include="XKCDColors.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

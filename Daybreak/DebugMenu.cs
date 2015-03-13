@@ -9,7 +9,7 @@ namespace Daybreak
     {
 
         private Rect windowRect = new Rect(128, 128, 256, 400);
-        private bool show = false;
+        private bool show = true;
 
         void OnGUI()
         {
@@ -39,6 +39,13 @@ namespace Daybreak
 
                 GUILayout.Space(4);
             }
+
+            GUILayout.Space(4);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Ambient");
+            RenderSettings.ambientIntensity = GUILayout.HorizontalSlider(RenderSettings.ambientIntensity, 0.0f, 2.0f, GUILayout.Width(120));
+            GUILayout.EndHorizontal();
         }
 
     }

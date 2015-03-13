@@ -27,6 +27,7 @@ namespace Daybreak
         {
             GameObject go = new GameObject();
             go.AddComponent<RenderingController>();
+            go.AddComponent<Timer>();
             go.AddComponent<DebugMenu>();
         }
 

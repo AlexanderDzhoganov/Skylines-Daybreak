@@ -30,14 +30,47 @@ namespace Daybreak
             return Color.Lerp(colorA, colorB, t);
         }
 
+        public static Color GetAmbientColorByTimeOfDay(TimeOfDay timeOfDay)
+        {
+            switch (timeOfDay)
+            {
+                case TimeOfDay.Sunrise:
+                    return XKCDColors.LightBlue;
+                case TimeOfDay.Morning:
+                    return XKCDColors.BrightLightBlue;
+                case TimeOfDay.Noon:
+                    return XKCDColors.SunYellow;
+                case TimeOfDay.Afternoon:
+                    return XKCDColors.OrangeYellow;
+                case TimeOfDay.Sunset:
+                    return XKCDColors.FadedOrange;
+                case TimeOfDay.Night:
+                    return XKCDColors.DarkBlueGrey;
+                case TimeOfDay.LateNight:
+                    return XKCDColors.AlmostBlack;
+            }
+
+            return Color.magenta;
+        }
+
+        public static Color GetAmbientColorByTimeOfDay(TimeOfDay timeOfDay, float t)
+        {
+            var colorA = GetAmbientColorByTimeOfDay(timeOfDay);
+            var colorB = GetAmbientColorByTimeOfDay(TimeUtils.GetNextTimeOfDay(timeOfDay));
+            return Color.Lerp(colorA, colorB, t);
+        }
+
+        private Timer timer;
+
         void Awake()
         {
-            
+            timer = GetComponent<Timer>();
         }
 
         void Update()
         {
-            
+            RenderSettings.ambientIntensity = 1.0f;
+            RenderSettings.ambientLight = GetAmbientColorByTimeOfDay(timer.TimeOfDay, timer.T);
         }
 
     }
