@@ -22,7 +22,7 @@ namespace Daybreak
 
         public float T
         {
-            get { return secondsUntilNextTimeOfDay/secondsPerTimeOfDay; }
+            get { return 1.0f - secondsUntilNextTimeOfDay/secondsPerTimeOfDay; }
         }
 
         void Awake()
