@@ -15,9 +15,6 @@ namespace Daybreak
             sphereMesh = go.GetComponent<MeshFilter>().mesh;
         }
 
-        private int idRef = 0;
-
-
         public override void RenderEffect(InstanceID id, EffectInfo.SpawnArea area, Vector3 velocity, float acceleration, float magnitude, float timeDelta, RenderManager.CameraInfo cameraInfo)
         {
             var pos = area.m_matrix.MultiplyPoint(Vector3.zero);
@@ -33,7 +30,8 @@ namespace Daybreak
             pos += Vector3.up * 8.0f;
             pos += dir*5.0f;
 
-            LightData data = new LightData(id, pos, new Color(1.0f, 0.827f, 0.471f), 0.3f, 32.0f, 10.0f);
+            id.Index = (uint)UnityEngine.Random.Range(0, 256);
+            LightData data = new LightData(id, pos, new Color(1.0f, 0.827f, 0.471f), 0.6f, 32.0f, 10.0f);
 
             data.m_type = LightType.Spot;
             data.m_spotAngle = 60.0f;

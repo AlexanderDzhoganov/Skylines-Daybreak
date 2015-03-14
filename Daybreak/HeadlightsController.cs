@@ -106,12 +106,9 @@ namespace Daybreak
             }
         }
 
-        public float debugSpotAngle = 30.0f;
-        public float debugRange = 8.0f;
-        public bool debugPoint = true;
-        public float debugIntensity = 8.0f;
-        public float debugDisplacement = 1.0f;
-        public float debugSideOffset = 0.8f;
+        public static float headlightSpotAngle = 68.0f;
+        private static float headlightRange = 10.5f;
+        private static float headlightIntensity = 3.0f;
 
         LightSource FetchLight(LightType type, Color color, float intensity, float range, float spotAngle = 0.0f)
         {
@@ -133,6 +130,7 @@ namespace Daybreak
             light.m_light.range = range;
             light.m_light.spotAngle = spotAngle;
             light.m_light.shadows = LightShadows.None;
+            light.enabled = true;
 
             return light;
         }
@@ -145,16 +143,12 @@ namespace Daybreak
 
             for (int i = 0; i < vManager.m_vehicles.m_buffer.Length; i++)
             {
-                Vehicle v = vManager.m_vehicles.m_buffer[i];
-                if (v.m_flags == Vehicle.Flags.None || v.Info == null)
+                if((vManager.m_vehicles.m_buffer[i].m_flags & (Vehicle.Flags.Created | Vehicle.Flags.Deleted)) != Vehicle.Flags.Created)
                 {
                     continue;
                 }
 
-                if ((v.m_flags & Vehicle.Flags.Spawned) == 0)
-                {
-                    continue;
-                }
+                Vehicle v = vManager.m_vehicles.m_buffer[i];
 
                 if (v.Info.m_vehicleType != VehicleInfo.VehicleType.Car)
                 {
@@ -165,26 +159,16 @@ namespace Daybreak
                 Quaternion orientation = Quaternion.identity;
                 v.GetSmoothPosition((ushort)i, out position, out orientation);
 
-                var leftHeadlight = FetchLight(LightType.Spot, Color.white, debugIntensity, debugRange, debugSpotAngle);
-                var rightHeadlight = FetchLight(LightType.Spot, Color.white, debugIntensity, debugRange, debugSpotAngle);
+                var headlight = FetchLight(LightType.Spot, Color.white, headlightIntensity, headlightRange, headlightSpotAngle);
 
                 Vector3 forward = orientation * Vector3.forward;
                 Vector3 right = orientation * Vector3.right;
                 Vector3 up = orientation*Vector3.up;
 
-                Vector3 sideOffset = right * debugSideOffset;
-
-                leftHeadlight.enabled = true;
-                leftHeadlight.transform.position = position + forward * v.Info.m_attachOffsetFront + sideOffset + up * 0.5f;
-                Vector3 lookAt = position + (orientation * Vector3.forward) * 64.0f + sideOffset;
-                leftHeadlight.transform.LookAt(lookAt, Vector3.up);
-                used.Add(leftHeadlight);
-
-                rightHeadlight.enabled = true;
-                rightHeadlight.transform.position = position + forward * v.Info.m_attachOffsetFront - sideOffset + up * 0.5f;
-                lookAt = position + (orientation * Vector3.forward) * 64.0f - sideOffset;
-                rightHeadlight.transform.LookAt(lookAt, Vector3.up);
-                used.Add(rightHeadlight);
+                headlight.transform.position = position + forward*v.Info.m_attachOffsetFront*2.0f + up;
+                Vector3 lookAt = position + (orientation * Vector3.forward) * 64.0f;
+                headlight.transform.LookAt(lookAt, Vector3.up);
+                used.Add(headlight);
             }
 
             foreach (var light in activeHeadlights)

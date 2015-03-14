@@ -27,6 +27,7 @@ namespace Daybreak
 
         public override void OnLevelLoaded(LoadMode mode)
         {
+            Singleton<SimulationManager>.instance.m_metaData.m_disableAchievements = SimulationMetaData.MetaBool.False;
             GameObject go = new GameObject();
             go.AddComponent<SunManager>();
             go.AddComponent<RenderingController>();

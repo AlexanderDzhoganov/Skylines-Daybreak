@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using ColossalFramework;
 using ColossalFramework.IO;
 using UnityEngine;
@@ -27,6 +28,12 @@ namespace Daybreak
             if (Input.GetKeyDown(KeyCode.F6))
             {
                 showUI = !showUI;
+            }
+
+            if (Input.GetKeyDown(KeyCode.F7))
+            {
+                Screenshot.Capture();
+                Log.Warning("SCREENSHOT");
             }
         }
 
@@ -180,37 +187,8 @@ namespace Daybreak
                 fogEffect.m_Sun = go.transform;
             }
 
-            ///////
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Range: ");
-            headlights.debugRange = GUILayout.HorizontalSlider(headlights.debugRange, 0.0f, 16.0f, GUILayout.Width(120));
-            GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Spot angle: ");
-            headlights.debugSpotAngle = GUILayout.HorizontalSlider(headlights.debugSpotAngle, 0.0f, 180.0f, GUILayout.Width(120));
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Intensity: ");
-            headlights.debugIntensity = GUILayout.HorizontalSlider(headlights.debugIntensity, 0.0f, 16.0f, GUILayout.Width(120));
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Displacement: ");
-            headlights.debugDisplacement = GUILayout.HorizontalSlider(headlights.debugDisplacement, -8.0f, 8.0f, GUILayout.Width(120));
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Side offset: ");
-            headlights.debugSideOffset = GUILayout.HorizontalSlider(headlights.debugSideOffset, 0.0f, 2.0f, GUILayout.Width(120));
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Use point lights: ");
-            headlights.debugPoint = GUILayout.Toggle(headlights.debugPoint, "");
-            GUILayout.EndHorizontal();
-
+         
             VehicleManager vManager = Singleton<VehicleManager>.instance;
             GUILayout.Label("Vehicle count (ItemCount): " + vManager.m_vehicles.ItemCount());
             GUILayout.Label("Vehicle count: " + vManager.m_vehicleCount);
@@ -230,7 +208,6 @@ namespace Daybreak
 
             GUILayout.Label("Time of day: " + timer.TimeOfDay);
             GUILayout.Label("T: " + timer.T);
-
 
             if (GUILayout.Button("export props"))
             {
@@ -300,7 +277,8 @@ namespace Daybreak
                 File.WriteAllText("C:\\Users\\nlight\\Desktop\\shaders.txt", s);
             }
 
-            if (GUILayout.Button("Fuck the system"))
+
+            if (GUILayout.Button("Kill envmap"))
             {
                 Shader.SetGlobalTexture("_EnvironmentCubemap", null);
                 Shader.SetGlobalColor("_EnvironmentFogColor", Color.black);

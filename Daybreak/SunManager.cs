@@ -8,7 +8,7 @@ namespace Daybreak
     public class SunManager : MonoBehaviour
     {
 
-        private static readonly float GlobalAmbientIntensity = 0.4f;
+        private static readonly float GlobalAmbientIntensity = 0.7f;
         private static readonly float GlobalSunIntensity = 1.0f;
 
         public static Vector3 GetSunDirectionByTimeOfDay(TimeOfDay timeOfDay)
@@ -63,9 +63,9 @@ namespace Daybreak
                 case TimeOfDay.Sunset:
                     return XKCDColors.Yellowish * 0.4f;
                 case TimeOfDay.Night:
-                    return XKCDColors.DarkPurple;
+                    return XKCDColors.Black;
                 case TimeOfDay.LateNight:
-                    return XKCDColors.VeryDarkPurple;
+                    return XKCDColors.Black;
             }
 
             return Color.magenta;
@@ -93,9 +93,9 @@ namespace Daybreak
                 case TimeOfDay.Sunset:
                     return XKCDColors.Yellowish * 0.4f;
                 case TimeOfDay.Night:
-                    return XKCDColors.DarkPurple;
+                    return XKCDColors.DarkBlue;
                 case TimeOfDay.LateNight:
-                    return XKCDColors.VeryDarkPurple;
+                    return XKCDColors.VeryDarkBlue;
             }
 
             return Color.magenta;
@@ -137,6 +137,8 @@ namespace Daybreak
             RenderSettings.ambientGroundColor = Color.black;
             RenderSettings.ambientLight = Color.black;
             RenderSettings.ambientSkyColor = GetAmbientColorByTimeOfDay(timer.TimeOfDay, timer.T);
+            RenderSettings.customReflection = null;
+            RenderSettings.skybox = null;
 
             light.color = GetSunColorByTimeOfDay(timer.TimeOfDay, timer.T);
             light.intensity = GlobalSunIntensity;
