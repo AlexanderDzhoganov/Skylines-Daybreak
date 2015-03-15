@@ -6,12 +6,33 @@ namespace Daybreak
 {
     public class BuildingGlowRenderer : MonoBehaviour
     {
+
+        public static bool BuildingLightsStateByTimeOfDay(TimeOfDay timeOfDay)
+        {
+            switch (timeOfDay)
+            {
+                case TimeOfDay.Sunset:
+                case TimeOfDay.Night:
+                case TimeOfDay.LateNight:
+                    return true;
+            }
+
+            return false;
+        }
+
+        private bool buildingLightsState = false;
+        private bool fadingInBuildingLights = false;
+        private bool fadingOutBuildingLights = false;
+        private float fadingBuildingLightsFactor = 1.0f;
+
         private Camera mainCamera;
         private Camera dummyCamera;
         private GameObject dummyGO;
 
         private RenderManager renderManager;
         private BuildingManager buildingManager;
+
+        private Timer timer;
 
         private Shader buildingWindowsReplacement;
         private Material buildingsGlowPP;
@@ -20,11 +41,23 @@ namespace Daybreak
         private RenderTexture rt;
         private RenderTexture rtBlurH, rtBlurV;
 
-        public float glowIntensity = 1.5f;
+        public float glowIntensity = 1.0f;
         public Color glowColor = new Color(0.862f, 0.862f, 0.831f, 1.0f);
         public float blurFactor = 1.0f;
 
         private int blurDownscale = 2;
+
+        void FadeInBuildingLights()
+        {
+            fadingInBuildingLights = true;
+            fadingOutBuildingLights = false;
+        }
+
+        void FadeOutBuildingLights()
+        {
+            fadingOutBuildingLights = true;
+            fadingInBuildingLights = false;
+        }
 
         void Awake()
         {
@@ -54,11 +87,58 @@ namespace Daybreak
 
         void LateUpdate()
         {
+            timer = timer ?? FindObjectOfType<Timer>();
+
+            if (timer == null)
+            {
+                return;
+            }
+
+            bool state = BuildingLightsStateByTimeOfDay(timer.TimeOfDay);
+            if (state != buildingLightsState)
+            {
+                if (state)
+                {
+                    FadeInBuildingLights();
+                }
+                else
+                {
+                    FadeOutBuildingLights();
+                }
+
+                buildingLightsState = state;
+            }
+
+            if (fadingInBuildingLights)
+            {
+                fadingBuildingLightsFactor += Time.deltaTime;
+                if (fadingBuildingLightsFactor >= 1.0f)
+                {
+                    fadingBuildingLightsFactor = 1.0f;
+                    fadingInBuildingLights = false;
+                }
+            }
+            else if (fadingOutBuildingLights)
+            {
+                fadingBuildingLightsFactor -= Time.deltaTime;
+                if (fadingBuildingLightsFactor <= 0.0f)
+                {
+                    fadingBuildingLightsFactor = 0.0f;
+                    fadingOutBuildingLights = false;
+                }
+            }
+
             RenderBuildingWindowsToTexture(rt);
         }
 
         void OnRenderImage(RenderTexture src, RenderTexture dst)
         {
+            if (!buildingLightsState && !fadingInBuildingLights && !fadingOutBuildingLights)
+            {
+                Graphics.Blit(src, dst);
+                return;
+            }
+
             glowBlurPP.SetVector("_BlurDir", new Vector4(blurFactor, 0.0f, 0.0f, 0.0f));
             Graphics.Blit(rt, rtBlurH, glowBlurPP);
 
@@ -66,7 +146,7 @@ namespace Daybreak
             Graphics.Blit(rtBlurH, rtBlurV, glowBlurPP);
 
             buildingsGlowPP.SetTexture("_GlowTex", rtBlurV);
-            buildingsGlowPP.SetFloat("_GlowIntensity", glowIntensity);
+            buildingsGlowPP.SetFloat("_GlowIntensity", glowIntensity * fadingBuildingLightsFactor);
             buildingsGlowPP.SetColor("_GlowColor", glowColor);
             Graphics.Blit(src, dst, buildingsGlowPP);
         }

@@ -35,11 +35,6 @@ namespace Daybreak
             go.AddComponent<DebugMenu>();
             go.AddComponent<HeadlightsController>();
 
-            var controller = GameObject.FindObjectOfType<CameraController>();
-            GameObject.Destroy(controller.gameObject.GetComponent("Bloom"));
-            GameObject.Destroy(controller.gameObject.GetComponent<FilmGrainEffect>());
-            GameObject.Destroy(controller.gameObject.GetComponent<ToneMapping>());
-            GameObject.Destroy(controller.gameObject.GetComponent<ColorCorrectionLut>());
         }
 
     }

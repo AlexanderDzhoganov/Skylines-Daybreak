@@ -3,6 +3,1209 @@
     public static class Shaders
     {
 
+        public static readonly string buildingBlurPP_V3 = @"// Compiled shader for all platforms, uncompressed size: 15.7KB
+
+// Skipping shader variants that would not be included into build of current scene.
+
+Shader ""BuildingGlowPostProcess"" {
+Properties {
+ _MainTex (""Base (RGB)"", 2D) = ""white"" { }
+ _BlurDir (""Blur dir"", Vector) = (0,0,0,0)
+}
+SubShader { 
+ LOD 100
+ Tags { ""RenderType""=""Opaque"" }
+
+
+ // Stats for Vertex shader:
+ //       d3d11 : 5 math
+ //    d3d11_9x : 5 math
+ //        d3d9 : 5 math
+ //        gles : 17 math, 5 texture
+ //       gles3 : 17 math, 5 texture
+ //       metal : 3 math
+ //      opengl : 17 math, 5 texture
+ // Stats for Fragment shader:
+ //       d3d11 : 10 math, 5 texture
+ //    d3d11_9x : 10 math, 5 texture
+ //        d3d9 : 13 math, 5 texture
+ //       metal : 17 math, 5 texture
+ Pass {
+  Tags { ""RenderType""=""Opaque"" }
+  GpuProgramID 38410
+Program ""vp"" {
+SubProgram ""opengl "" {
+// Stats: 17 math, 5 textures
+""!!GLSL
+#ifdef VERTEX
+
+uniform vec4 _MainTex_ST;
+varying vec2 xlv_TEXCOORD0;
+void main ()
+{
+  gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
+  xlv_TEXCOORD0 = ((gl_MultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+}
+
+
+#endif
+#ifdef FRAGMENT
+uniform sampler2D _MainTex;
+uniform vec2 _BlurDir;
+uniform vec2 _MainTex_TexelSize;
+varying vec2 xlv_TEXCOORD0;
+void main ()
+{
+  vec4 col_1;
+  vec2 tmpvar_2;
+  tmpvar_2 = (_BlurDir * _MainTex_TexelSize);
+  col_1.xyz = (((
+    ((texture2D (_MainTex, (xlv_TEXCOORD0 - (2.0 * tmpvar_2))) * 0.12) + (texture2D (_MainTex, (xlv_TEXCOORD0 - tmpvar_2)) * 0.2))
+   + 
+    (texture2D (_MainTex, xlv_TEXCOORD0) * 0.36)
+  ) + (texture2D (_MainTex, 
+    (xlv_TEXCOORD0 + tmpvar_2)
+  ) * 0.2)) + (texture2D (_MainTex, (xlv_TEXCOORD0 + 
+    (2.0 * tmpvar_2)
+  )) * 0.12)).xyz;
+  col_1.w = 1.0;
+  gl_FragData[0] = col_1;
+}
+
+
+#endif
+""
+}
+SubProgram ""d3d9 "" {
+// Stats: 5 math
+Bind ""vertex"" Vertex
+Bind ""texcoord"" TexCoord0
+Matrix 0 [glstate_matrix_mvp]
+Vector 4 [_MainTex_ST]
+""vs_2_0
+dcl_position v0
+dcl_texcoord v1
+dp4 oPos.x, c0, v0
+dp4 oPos.y, c1, v0
+dp4 oPos.z, c2, v0
+dp4 oPos.w, c3, v0
+mad oT0.xy, v1, c4, c4.zwzw
+
+""
+}
+SubProgram ""d3d11 "" {
+// Stats: 5 math
+Bind ""vertex"" Vertex
+Bind ""texcoord"" TexCoord0
+ConstBuffer ""$Globals"" 144
+Vector 112 [_MainTex_ST]
+ConstBuffer ""UnityPerDraw"" 336
+Matrix 0 [glstate_matrix_mvp]
+BindCB  ""$Globals"" 0
+BindCB  ""UnityPerDraw"" 1
+""vs_4_0
+eefiecediclbinofmafhnpjgnjjnoeonbagdabifabaaaaaaamacaaaaadaaaaaa
+cmaaaaaaiaaaaaaaniaaaaaaejfdeheoemaaaaaaacaaaaaaaiaaaaaadiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadadaaaafaepfdejfeejepeoaafeeffiedepepfceeaaklkl
+epfdeheofaaaaaaaacaaaaaaaiaaaaaadiaaaaaaaaaaaaaaabaaaaaaadaaaaaa
+aaaaaaaaapaaaaaaeeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaa
+fdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefccmabaaaa
+eaaaabaaelaaaaaafjaaaaaeegiocaaaaaaaaaaaaiaaaaaafjaaaaaeegiocaaa
+abaaaaaaaeaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaaddcbabaaaabaaaaaa
+ghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaaddccabaaaabaaaaaagiaaaaac
+abaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaabaaaaaa
+abaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaaagbabaaa
+aaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaa
+acaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaaaaaaaaa
+egiocaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaal
+dccabaaaabaaaaaaegbabaaaabaaaaaaegiacaaaaaaaaaaaahaaaaaaogikcaaa
+aaaaaaaaahaaaaaadoaaaaab""
+}
+SubProgram ""gles "" {
+// Stats: 17 math, 5 textures
+""!!GLES
+
+
+#ifdef VERTEX
+
+attribute vec4 _glesVertex;
+attribute vec4 _glesMultiTexCoord0;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _MainTex_ST;
+varying mediump vec2 xlv_TEXCOORD0;
+void main ()
+{
+  mediump vec2 tmpvar_1;
+  highp vec2 tmpvar_2;
+  tmpvar_2 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  tmpvar_1 = tmpvar_2;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = tmpvar_1;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+uniform sampler2D _MainTex;
+uniform highp vec2 _BlurDir;
+uniform highp vec2 _MainTex_TexelSize;
+varying mediump vec2 xlv_TEXCOORD0;
+void main ()
+{
+  lowp vec4 col_1;
+  highp vec2 tmpvar_2;
+  tmpvar_2 = (_BlurDir * _MainTex_TexelSize);
+  highp vec2 P_3;
+  P_3 = (xlv_TEXCOORD0 - (2.0 * tmpvar_2));
+  highp vec2 P_4;
+  P_4 = (xlv_TEXCOORD0 - tmpvar_2);
+  highp vec2 P_5;
+  P_5 = (xlv_TEXCOORD0 + tmpvar_2);
+  highp vec2 P_6;
+  P_6 = (xlv_TEXCOORD0 + (2.0 * tmpvar_2));
+  col_1.xyz = (((
+    ((texture2D (_MainTex, P_3) * 0.12) + (texture2D (_MainTex, P_4) * 0.2))
+   + 
+    (texture2D (_MainTex, xlv_TEXCOORD0) * 0.36)
+  ) + (texture2D (_MainTex, P_5) * 0.2)) + (texture2D (_MainTex, P_6) * 0.12)).xyz;
+  col_1.w = 1.0;
+  gl_FragData[0] = col_1;
+}
+
+
+
+#endif""
+}
+SubProgram ""d3d11_9x "" {
+// Stats: 5 math
+Bind ""vertex"" Vertex
+Bind ""texcoord"" TexCoord0
+ConstBuffer ""$Globals"" 144
+Vector 112 [_MainTex_ST]
+ConstBuffer ""UnityPerDraw"" 336
+Matrix 0 [glstate_matrix_mvp]
+BindCB  ""$Globals"" 0
+BindCB  ""UnityPerDraw"" 1
+""vs_4_0_level_9_1
+eefiecedklbaenjdmegagpdkcfpdgcpejoanebigabaaaaaapiacaaaaaeaaaaaa
+daaaaaaabiabaaaaemacaaaakaacaaaaebgpgodjoaaaaaaaoaaaaaaaaaacpopp
+kaaaaaaaeaaaaaaaacaaceaaaaaadmaaaaaadmaaaaaaceaaabaadmaaaaaaahaa
+abaaabaaaaaaaaaaabaaaaaaaeaaacaaaaaaaaaaaaaaaaaaaaacpoppbpaaaaac
+afaaaaiaaaaaapjabpaaaaacafaaabiaabaaapjaaeaaaaaeaaaaadoaabaaoeja
+abaaoekaabaaookaafaaaaadaaaaapiaaaaaffjaadaaoekaaeaaaaaeaaaaapia
+acaaoekaaaaaaajaaaaaoeiaaeaaaaaeaaaaapiaaeaaoekaaaaakkjaaaaaoeia
+aeaaaaaeaaaaapiaafaaoekaaaaappjaaaaaoeiaaeaaaaaeaaaaadmaaaaappia
+aaaaoekaaaaaoeiaabaaaaacaaaaammaaaaaoeiappppaaaafdeieefccmabaaaa
+eaaaabaaelaaaaaafjaaaaaeegiocaaaaaaaaaaaaiaaaaaafjaaaaaeegiocaaa
+abaaaaaaaeaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaaddcbabaaaabaaaaaa
+ghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaaddccabaaaabaaaaaagiaaaaac
+abaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaabaaaaaa
+abaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaaagbabaaa
+aaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaa
+acaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaaaaaaaaa
+egiocaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaal
+dccabaaaabaaaaaaegbabaaaabaaaaaaegiacaaaaaaaaaaaahaaaaaaogikcaaa
+aaaaaaaaahaaaaaadoaaaaabejfdeheoemaaaaaaacaaaaaaaiaaaaaadiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadadaaaafaepfdejfeejepeoaafeeffiedepepfceeaaklkl
+epfdeheofaaaaaaaacaaaaaaaiaaaaaadiaaaaaaaaaaaaaaabaaaaaaadaaaaaa
+aaaaaaaaapaaaaaaeeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaa
+fdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklkl""
+}
+SubProgram ""gles3 "" {
+// Stats: 17 math, 5 textures
+""!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+
+in vec4 _glesVertex;
+in vec4 _glesMultiTexCoord0;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _MainTex_ST;
+out mediump vec2 xlv_TEXCOORD0;
+void main ()
+{
+  mediump vec2 tmpvar_1;
+  highp vec2 tmpvar_2;
+  tmpvar_2 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  tmpvar_1 = tmpvar_2;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = tmpvar_1;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+
+layout(location=0) out mediump vec4 _glesFragData[4];
+uniform sampler2D _MainTex;
+uniform highp vec2 _BlurDir;
+uniform highp vec2 _MainTex_TexelSize;
+in mediump vec2 xlv_TEXCOORD0;
+void main ()
+{
+  lowp vec4 col_1;
+  highp vec2 tmpvar_2;
+  tmpvar_2 = (_BlurDir * _MainTex_TexelSize);
+  highp vec2 P_3;
+  P_3 = (xlv_TEXCOORD0 - (2.0 * tmpvar_2));
+  highp vec2 P_4;
+  P_4 = (xlv_TEXCOORD0 - tmpvar_2);
+  highp vec2 P_5;
+  P_5 = (xlv_TEXCOORD0 + tmpvar_2);
+  highp vec2 P_6;
+  P_6 = (xlv_TEXCOORD0 + (2.0 * tmpvar_2));
+  col_1.xyz = (((
+    ((texture (_MainTex, P_3) * 0.12) + (texture (_MainTex, P_4) * 0.2))
+   + 
+    (texture (_MainTex, xlv_TEXCOORD0) * 0.36)
+  ) + (texture (_MainTex, P_5) * 0.2)) + (texture (_MainTex, P_6) * 0.12)).xyz;
+  col_1.w = 1.0;
+  _glesFragData[0] = col_1;
+}
+
+
+
+#endif""
+}
+SubProgram ""metal "" {
+// Stats: 3 math
+Bind ""vertex"" ATTR0
+Bind ""texcoord"" ATTR1
+ConstBuffer ""$Globals"" 80
+Matrix 0 [glstate_matrix_mvp]
+Vector 64 [_MainTex_ST]
+""metal_vs
+#include <metal_stdlib>
+using namespace metal;
+struct xlatMtlShaderInput {
+  float4 _glesVertex [[attribute(0)]];
+  float4 _glesMultiTexCoord0 [[attribute(1)]];
+};
+struct xlatMtlShaderOutput {
+  float4 gl_Position [[position]];
+  half2 xlv_TEXCOORD0;
+};
+struct xlatMtlShaderUniform {
+  float4x4 glstate_matrix_mvp;
+  float4 _MainTex_ST;
+};
+vertex xlatMtlShaderOutput xlatMtlMain (xlatMtlShaderInput _mtl_i [[stage_in]], constant xlatMtlShaderUniform& _mtl_u [[buffer(0)]])
+{
+  xlatMtlShaderOutput _mtl_o;
+  half2 tmpvar_1;
+  float2 tmpvar_2;
+  tmpvar_2 = ((_mtl_i._glesMultiTexCoord0.xy * _mtl_u._MainTex_ST.xy) + _mtl_u._MainTex_ST.zw);
+  tmpvar_1 = half2(tmpvar_2);
+  _mtl_o.gl_Position = (_mtl_u.glstate_matrix_mvp * _mtl_i._glesVertex);
+  _mtl_o.xlv_TEXCOORD0 = tmpvar_1;
+  return _mtl_o;
+}
+
+""
+}
+}
+Program ""fp"" {
+SubProgram ""opengl "" {
+""!!GLSL""
+}
+SubProgram ""d3d9 "" {
+// Stats: 13 math, 5 textures
+Vector 0 [_BlurDir]
+Vector 1 [_MainTex_TexelSize]
+SetTexture 0 [_MainTex] 2D 0
+""ps_2_0
+def c2, 2, 0.200000003, 0.119999997, 0.360000014
+def c3, 1, 0, 0, 0
+dcl t0.xy
+dcl_2d s0
+mov r0.xy, c0
+mad r1.xy, r0, -c1, t0
+mul r0.zw, r0.wzyx, c1.wzyx
+mad r2.xy, r0.wzyx, -c2.x, t0
+mad r3.xy, r0.wzyx, c2.x, t0
+mad r0.xy, r0, c1, t0
+texld r1, r1, s0
+texld r3, r3, s0
+texld r2, r2, s0
+texld r4, t0, s0
+texld r0, r0, s0
+mul r1.xyz, r1, c2.y
+mad_pp r1.xyz, r2, c2.z, r1
+mad_pp r1.xyz, r4, c2.w, r1
+mad_pp r0.xyz, r0, c2.y, r1
+mad_pp r0.xyz, r3, c2.z, r0
+mov_pp r0.w, c3.x
+mov_pp oC0, r0
+
+""
+}
+SubProgram ""d3d11 "" {
+// Stats: 10 math, 5 textures
+SetTexture 0 [_MainTex] 2D 0
+ConstBuffer ""$Globals"" 144
+Vector 96 [_BlurDir] 2
+Vector 128 [_MainTex_TexelSize] 2
+BindCB  ""$Globals"" 0
+""ps_4_0
+eefiecedgpkpjkbakijppgcdgbnjlgfonfjgcfioabaaaaaakmadaaaaadaaaaaa
+cmaaaaaaieaaaaaaliaaaaaaejfdeheofaaaaaaaacaaaaaaaiaaaaaadiaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaeeaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadadaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
+aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcomacaaaa
+eaaaaaaallaaaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafkaaaaadaagabaaa
+aaaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaagcbaaaaddcbabaaaabaaaaaa
+gfaaaaadpccabaaaaaaaaaaagiaaaaacadaaaaaadcaaaaamdcaabaaaaaaaaaaa
+egiacaiaebaaaaaaaaaaaaaaagaaaaaaegiacaaaaaaaaaaaaiaaaaaaegbabaaa
+abaaaaaaefaaaaajpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaa
+aagabaaaaaaaaaaadiaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaa
+mnmmemdomnmmemdomnmmemdoaaaaaaaadiaaaaajdcaabaaaabaaaaaaegiacaaa
+aaaaaaaaagaaaaaaegiacaaaaaaaaaaaaiaaaaaadcaaaaanmcaabaaaabaaaaaa
+agaebaiaebaaaaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaeaaaaaaaea
+agbebaaaabaaaaaadcaaaaamdcaabaaaabaaaaaaegaabaaaabaaaaaaaceaaaaa
+aaaaaaeaaaaaaaeaaaaaaaaaaaaaaaaaegbabaaaabaaaaaaefaaaaajpcaabaaa
+acaaaaaaegaabaaaabaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaefaaaaaj
+pcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaa
+dcaaaaamhcaabaaaaaaaaaaaegacbaaaabaaaaaaaceaaaaaipmcpfdnipmcpfdn
+ipmcpfdnaaaaaaaaegacbaaaaaaaaaaaefaaaaajpcaabaaaabaaaaaaegbabaaa
+abaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaadcaaaaamhcaabaaaaaaaaaaa
+egacbaaaabaaaaaaaceaaaaaomfblidoomfblidoomfblidoaaaaaaaaegacbaaa
+aaaaaaaadcaaaaaldcaabaaaabaaaaaaegiacaaaaaaaaaaaagaaaaaaegiacaaa
+aaaaaaaaaiaaaaaaegbabaaaabaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaa
+abaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaadcaaaaamhcaabaaaaaaaaaaa
+egacbaaaabaaaaaaaceaaaaamnmmemdomnmmemdomnmmemdoaaaaaaaaegacbaaa
+aaaaaaaadcaaaaamhccabaaaaaaaaaaaegacbaaaacaaaaaaaceaaaaaipmcpfdn
+ipmcpfdnipmcpfdnaaaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab""
+}
+SubProgram ""gles "" {
+""!!GLES""
+}
+SubProgram ""d3d11_9x "" {
+// Stats: 10 math, 5 textures
+SetTexture 0 [_MainTex] 2D 0
+ConstBuffer ""$Globals"" 144
+Vector 96 [_BlurDir] 2
+Vector 128 [_MainTex_TexelSize] 2
+BindCB  ""$Globals"" 0
+""ps_4_0_level_9_1
+eefiecedkphfpnlnikllkhnfbekllofnlmmejhknabaaaaaahmafaaaaaeaaaaaa
+daaaaaaapmabaaaapaaeaaaaeiafaaaaebgpgodjmeabaaaameabaaaaaaacpppp
+ieabaaaaeaaaaaaaacaaciaaaaaaeaaaaaaaeaaaabaaceaaaaaaeaaaaaaaaaaa
+aaaaagaaabaaaaaaaaaaaaaaaaaaaiaaabaaabaaaaaaaaaaaaacppppfbaaaaaf
+acaaapkaaaaaaaeamnmmemdoipmcpfdnomfblidofbaaaaafadaaapkaaaaaiadp
+aaaaaaaaaaaaaaaaaaaaaaaabpaaaaacaaaaaaiaaaaaadlabpaaaaacaaaaaaja
+aaaiapkaabaaaaacaaaaadiaaaaaoekaaeaaaaaeabaaadiaaaaaoeiaabaaoekb
+aaaaoelaafaaaaadaaaaamiaaaaabliaabaablkaaeaaaaaeacaaadiaaaaablia
+acaaaakbaaaaoelaaeaaaaaeadaaadiaaaaabliaacaaaakaaaaaoelaaeaaaaae
+aaaaadiaaaaaoeiaabaaoekaaaaaoelaecaaaaadabaaapiaabaaoeiaaaaioeka
+ecaaaaadadaaapiaadaaoeiaaaaioekaecaaaaadacaaapiaacaaoeiaaaaioeka
+ecaaaaadaeaaapiaaaaaoelaaaaioekaecaaaaadaaaaapiaaaaaoeiaaaaioeka
+afaaaaadabaaahiaabaaoeiaacaaffkaaeaaaaaeabaachiaacaaoeiaacaakkka
+abaaoeiaaeaaaaaeabaachiaaeaaoeiaacaappkaabaaoeiaaeaaaaaeaaaachia
+aaaaoeiaacaaffkaabaaoeiaaeaaaaaeaaaachiaadaaoeiaacaakkkaaaaaoeia
+abaaaaacaaaaciiaadaaaakaabaaaaacaaaicpiaaaaaoeiappppaaaafdeieefc
+omacaaaaeaaaaaaallaaaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafkaaaaad
+aagabaaaaaaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaagcbaaaaddcbabaaa
+abaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacadaaaaaadcaaaaamdcaabaaa
+aaaaaaaaegiacaiaebaaaaaaaaaaaaaaagaaaaaaegiacaaaaaaaaaaaaiaaaaaa
+egbabaaaabaaaaaaefaaaaajpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+aaaaaaaaaagabaaaaaaaaaaadiaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaa
+aceaaaaamnmmemdomnmmemdomnmmemdoaaaaaaaadiaaaaajdcaabaaaabaaaaaa
+egiacaaaaaaaaaaaagaaaaaaegiacaaaaaaaaaaaaiaaaaaadcaaaaanmcaabaaa
+abaaaaaaagaebaiaebaaaaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaea
+aaaaaaeaagbebaaaabaaaaaadcaaaaamdcaabaaaabaaaaaaegaabaaaabaaaaaa
+aceaaaaaaaaaaaeaaaaaaaeaaaaaaaaaaaaaaaaaegbabaaaabaaaaaaefaaaaaj
+pcaabaaaacaaaaaaegaabaaaabaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaa
+efaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaaaaaaaaaagabaaa
+aaaaaaaadcaaaaamhcaabaaaaaaaaaaaegacbaaaabaaaaaaaceaaaaaipmcpfdn
+ipmcpfdnipmcpfdnaaaaaaaaegacbaaaaaaaaaaaefaaaaajpcaabaaaabaaaaaa
+egbabaaaabaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaadcaaaaamhcaabaaa
+aaaaaaaaegacbaaaabaaaaaaaceaaaaaomfblidoomfblidoomfblidoaaaaaaaa
+egacbaaaaaaaaaaadcaaaaaldcaabaaaabaaaaaaegiacaaaaaaaaaaaagaaaaaa
+egiacaaaaaaaaaaaaiaaaaaaegbabaaaabaaaaaaefaaaaajpcaabaaaabaaaaaa
+egaabaaaabaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaadcaaaaamhcaabaaa
+aaaaaaaaegacbaaaabaaaaaaaceaaaaamnmmemdomnmmemdomnmmemdoaaaaaaaa
+egacbaaaaaaaaaaadcaaaaamhccabaaaaaaaaaaaegacbaaaacaaaaaaaceaaaaa
+ipmcpfdnipmcpfdnipmcpfdnaaaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaa
+aaaaaaaaabeaaaaaaaaaiadpdoaaaaabejfdeheofaaaaaaaacaaaaaaaiaaaaaa
+diaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaeeaaaaaaaaaaaaaa
+aaaaaaaaadaaaaaaabaaaaaaadadaaaafdfgfpfaepfdejfeejepeoaafeeffied
+epepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaa
+aaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl""
+}
+SubProgram ""gles3 "" {
+""!!GLES3""
+}
+SubProgram ""metal "" {
+// Stats: 17 math, 5 textures
+SetTexture 0 [_MainTex] 2D 0
+ConstBuffer ""$Globals"" 16
+Vector 0 [_BlurDir] 2
+Vector 8 [_MainTex_TexelSize] 2
+""metal_fs
+#include <metal_stdlib>
+using namespace metal;
+struct xlatMtlShaderInput {
+  half2 xlv_TEXCOORD0;
+};
+struct xlatMtlShaderOutput {
+  half4 _glesFragData_0 [[color(0)]];
+};
+struct xlatMtlShaderUniform {
+  float2 _BlurDir;
+  float2 _MainTex_TexelSize;
+};
+fragment xlatMtlShaderOutput xlatMtlMain (xlatMtlShaderInput _mtl_i [[stage_in]], constant xlatMtlShaderUniform& _mtl_u [[buffer(0)]]
+  ,   texture2d<half> _MainTex [[texture(0)]], sampler _mtlsmp__MainTex [[sampler(0)]])
+{
+  xlatMtlShaderOutput _mtl_o;
+  half4 col_1;
+  float2 tmpvar_2;
+  tmpvar_2 = (_mtl_u._BlurDir * _mtl_u._MainTex_TexelSize);
+  float2 P_3;
+  P_3 = ((float2)_mtl_i.xlv_TEXCOORD0 - (2.0 * tmpvar_2));
+  float2 P_4;
+  P_4 = ((float2)_mtl_i.xlv_TEXCOORD0 - tmpvar_2);
+  float2 P_5;
+  P_5 = ((float2)_mtl_i.xlv_TEXCOORD0 + tmpvar_2);
+  float2 P_6;
+  P_6 = ((float2)_mtl_i.xlv_TEXCOORD0 + (2.0 * tmpvar_2));
+  col_1.xyz = (((
+    ((_MainTex.sample(_mtlsmp__MainTex, (float2)(P_3)) * (half)0.12) + (_MainTex.sample(_mtlsmp__MainTex, (float2)(P_4)) * (half)0.2))
+   + 
+    (_MainTex.sample(_mtlsmp__MainTex, (float2)(_mtl_i.xlv_TEXCOORD0)) * (half)0.36)
+  ) + (_MainTex.sample(_mtlsmp__MainTex, (float2)(P_5)) * (half)0.2)) + (_MainTex.sample(_mtlsmp__MainTex, (float2)(P_6)) * (half)0.12)).xyz;
+  col_1.w = half(1.0);
+  _mtl_o._glesFragData_0 = col_1;
+  return _mtl_o;
+}
+
+""
+}
+}
+ }
+}
+}";
+
+        public static readonly string buildingBlurPP_V2 = @"// Compiled shader for all platforms, uncompressed size: 24.8KB
+
+// Skipping shader variants that would not be included into build of current scene.
+
+Shader ""BuildingBlurShader"" {
+Properties {
+ _MainTex (""Base (RGB)"", 2D) = ""white"" { }
+ _BlurDir (""Blur dir"", Vector) = (0,0,0,0)
+}
+SubShader { 
+ LOD 100
+ Tags { ""RenderType""=""Opaque"" }
+
+
+ // Stats for Vertex shader:
+ //       d3d11 : 8 math
+ //    d3d11_9x : 8 math
+ //        d3d9 : 11 math
+ //        gles : 35 math, 10 texture
+ //       gles3 : 35 math, 10 texture
+ //       metal : 6 math
+ //      opengl : 35 math, 10 texture
+ // Stats for Fragment shader:
+ //       d3d11 : 19 math, 10 texture
+ //    d3d11_9x : 19 math, 10 texture
+ //        d3d9 : 23 math, 10 texture
+ //       metal : 35 math, 10 texture
+ Pass {
+  Tags { ""RenderType""=""Opaque"" }
+  GpuProgramID 48411
+Program ""vp"" {
+SubProgram ""opengl "" {
+// Stats: 35 math, 10 textures
+""!!GLSL
+#ifdef VERTEX
+uniform vec4 _ProjectionParams;
+
+uniform vec4 _MainTex_ST;
+varying vec2 xlv_TEXCOORD0;
+varying vec4 xlv_TEXCOORD1;
+void main ()
+{
+  vec4 tmpvar_1;
+  tmpvar_1 = (gl_ModelViewProjectionMatrix * gl_Vertex);
+  vec4 o_2;
+  vec4 tmpvar_3;
+  tmpvar_3 = (tmpvar_1 * 0.5);
+  vec2 tmpvar_4;
+  tmpvar_4.x = tmpvar_3.x;
+  tmpvar_4.y = (tmpvar_3.y * _ProjectionParams.x);
+  o_2.xy = (tmpvar_4 + tmpvar_3.w);
+  o_2.zw = tmpvar_1.zw;
+  gl_Position = tmpvar_1;
+  xlv_TEXCOORD0 = ((gl_MultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  xlv_TEXCOORD1 = o_2;
+}
+
+
+#endif
+#ifdef FRAGMENT
+uniform sampler2D _CameraDepthTexture;
+uniform sampler2D _MainTex;
+uniform vec2 _BlurDir;
+uniform vec2 _MainTex_TexelSize;
+varying vec2 xlv_TEXCOORD0;
+varying vec4 xlv_TEXCOORD1;
+void main ()
+{
+  vec4 col_1;
+  vec2 tmpvar_2;
+  tmpvar_2 = ((_BlurDir * _MainTex_TexelSize) * (1.0 - texture2DProj (_CameraDepthTexture, xlv_TEXCOORD1).x));
+  col_1.xyz = (((
+    ((((
+      ((texture2D (_MainTex, (xlv_TEXCOORD0 - (4.0 * tmpvar_2))) * 0.05) + (texture2D (_MainTex, (xlv_TEXCOORD0 - (3.0 * tmpvar_2))) * 0.09))
+     + 
+      (texture2D (_MainTex, (xlv_TEXCOORD0 - (2.0 * tmpvar_2))) * 0.12)
+    ) + (texture2D (_MainTex, 
+      (xlv_TEXCOORD0 - tmpvar_2)
+    ) * 0.15)) + (texture2D (_MainTex, xlv_TEXCOORD0) * 0.16)) + (texture2D (_MainTex, (xlv_TEXCOORD0 + tmpvar_2)) * 0.15))
+   + 
+    (texture2D (_MainTex, (xlv_TEXCOORD0 + (2.0 * tmpvar_2))) * 0.12)
+  ) + (texture2D (_MainTex, 
+    (xlv_TEXCOORD0 + (3.0 * tmpvar_2))
+  ) * 0.09)) + (texture2D (_MainTex, (xlv_TEXCOORD0 + 
+    (4.0 * tmpvar_2)
+  )) * 0.05)).xyz;
+  col_1.w = 1.0;
+  gl_FragData[0] = col_1;
+}
+
+
+#endif
+""
+}
+SubProgram ""d3d9 "" {
+// Stats: 11 math
+Bind ""vertex"" Vertex
+Bind ""texcoord"" TexCoord0
+Matrix 0 [glstate_matrix_mvp]
+Vector 6 [_MainTex_ST]
+Vector 4 [_ProjectionParams]
+Vector 5 [_ScreenParams]
+""vs_2_0
+def c7, 0.5, 0, 0, 0
+dcl_position v0
+dcl_texcoord v1
+mad oT0.xy, v1, c6, c6.zwzw
+dp4 r0.y, c1, v0
+mul r1.x, r0.y, c4.x
+mul r1.w, r1.x, c7.x
+dp4 r0.x, c0, v0
+dp4 r0.w, c3, v0
+mul r1.xz, r0.xyww, c7.x
+mad oT1.xy, r1.z, c5.zwzw, r1.xwzw
+dp4 r0.z, c2, v0
+mov oPos, r0
+mov oT1.zw, r0
+
+""
+}
+SubProgram ""d3d11 "" {
+// Stats: 8 math
+Bind ""vertex"" Vertex
+Bind ""texcoord"" TexCoord0
+ConstBuffer ""$Globals"" 144
+Vector 112 [_MainTex_ST]
+ConstBuffer ""UnityPerCamera"" 144
+Vector 80 [_ProjectionParams]
+ConstBuffer ""UnityPerDraw"" 336
+Matrix 0 [glstate_matrix_mvp]
+BindCB  ""$Globals"" 0
+BindCB  ""UnityPerCamera"" 1
+BindCB  ""UnityPerDraw"" 2
+""vs_4_0
+eefiecedledcnedlocdchabhjfiahbncfgnpbcjaabaaaaaammacaaaaadaaaaaa
+cmaaaaaaiaaaaaaapaaaaaaaejfdeheoemaaaaaaacaaaaaaaiaaaaaadiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadadaaaafaepfdejfeejepeoaafeeffiedepepfceeaaklkl
+epfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaaaaaaaaaaabaaaaaaadaaaaaa
+aaaaaaaaapaaaaaafmaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaa
+fmaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaaapaaaaaafdfgfpfaepfdejfe
+ejepeoaafeeffiedepepfceeaaklklklfdeieefcneabaaaaeaaaabaahfaaaaaa
+fjaaaaaeegiocaaaaaaaaaaaaiaaaaaafjaaaaaeegiocaaaabaaaaaaagaaaaaa
+fjaaaaaeegiocaaaacaaaaaaaeaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaad
+dcbabaaaabaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaaddccabaaa
+abaaaaaagfaaaaadpccabaaaacaaaaaagiaaaaacacaaaaaadiaaaaaipcaabaaa
+aaaaaaaafgbfbaaaaaaaaaaaegiocaaaacaaaaaaabaaaaaadcaaaaakpcaabaaa
+aaaaaaaaegiocaaaacaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaacaaaaaakgbkbaaaaaaaaaaa
+egaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaadaaaaaa
+pgbpbaaaaaaaaaaaegaobaaaaaaaaaaadgaaaaafpccabaaaaaaaaaaaegaobaaa
+aaaaaaaadcaaaaaldccabaaaabaaaaaaegbabaaaabaaaaaaegiacaaaaaaaaaaa
+ahaaaaaaogikcaaaaaaaaaaaahaaaaaadiaaaaaiccaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakiacaaaabaaaaaaafaaaaaadiaaaaakncaabaaaabaaaaaaagahbaaa
+aaaaaaaaaceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaa
+acaaaaaakgaobaaaaaaaaaaaaaaaaaahdccabaaaacaaaaaakgakbaaaabaaaaaa
+mgaabaaaabaaaaaadoaaaaab""
+}
+SubProgram ""gles "" {
+// Stats: 35 math, 10 textures
+""!!GLES
+
+
+#ifdef VERTEX
+
+attribute vec4 _glesVertex;
+attribute vec4 _glesMultiTexCoord0;
+uniform highp vec4 _ProjectionParams;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _MainTex_ST;
+varying mediump vec2 xlv_TEXCOORD0;
+varying highp vec4 xlv_TEXCOORD1;
+void main ()
+{
+  mediump vec2 tmpvar_1;
+  highp vec4 tmpvar_2;
+  tmpvar_2 = (glstate_matrix_mvp * _glesVertex);
+  highp vec2 tmpvar_3;
+  tmpvar_3 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  tmpvar_1 = tmpvar_3;
+  highp vec4 o_4;
+  highp vec4 tmpvar_5;
+  tmpvar_5 = (tmpvar_2 * 0.5);
+  highp vec2 tmpvar_6;
+  tmpvar_6.x = tmpvar_5.x;
+  tmpvar_6.y = (tmpvar_5.y * _ProjectionParams.x);
+  o_4.xy = (tmpvar_6 + tmpvar_5.w);
+  o_4.zw = tmpvar_2.zw;
+  gl_Position = tmpvar_2;
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD1 = o_4;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+uniform sampler2D _CameraDepthTexture;
+uniform sampler2D _MainTex;
+uniform highp vec2 _BlurDir;
+uniform highp vec2 _MainTex_TexelSize;
+varying mediump vec2 xlv_TEXCOORD0;
+varying highp vec4 xlv_TEXCOORD1;
+void main ()
+{
+  lowp vec4 col_1;
+  highp float depth_2;
+  lowp float tmpvar_3;
+  tmpvar_3 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD1).x;
+  depth_2 = tmpvar_3;
+  highp vec2 tmpvar_4;
+  tmpvar_4 = ((_BlurDir * _MainTex_TexelSize) * (1.0 - depth_2));
+  highp vec2 P_5;
+  P_5 = (xlv_TEXCOORD0 - (4.0 * tmpvar_4));
+  highp vec2 P_6;
+  P_6 = (xlv_TEXCOORD0 - (3.0 * tmpvar_4));
+  highp vec2 P_7;
+  P_7 = (xlv_TEXCOORD0 - (2.0 * tmpvar_4));
+  highp vec2 P_8;
+  P_8 = (xlv_TEXCOORD0 - tmpvar_4);
+  highp vec2 P_9;
+  P_9 = (xlv_TEXCOORD0 + tmpvar_4);
+  highp vec2 P_10;
+  P_10 = (xlv_TEXCOORD0 + (2.0 * tmpvar_4));
+  highp vec2 P_11;
+  P_11 = (xlv_TEXCOORD0 + (3.0 * tmpvar_4));
+  highp vec2 P_12;
+  P_12 = (xlv_TEXCOORD0 + (4.0 * tmpvar_4));
+  col_1.xyz = (((
+    ((((
+      ((texture2D (_MainTex, P_5) * 0.05) + (texture2D (_MainTex, P_6) * 0.09))
+     + 
+      (texture2D (_MainTex, P_7) * 0.12)
+    ) + (texture2D (_MainTex, P_8) * 0.15)) + (texture2D (_MainTex, xlv_TEXCOORD0) * 0.16)) + (texture2D (_MainTex, P_9) * 0.15))
+   + 
+    (texture2D (_MainTex, P_10) * 0.12)
+  ) + (texture2D (_MainTex, P_11) * 0.09)) + (texture2D (_MainTex, P_12) * 0.05)).xyz;
+  col_1.w = 1.0;
+  gl_FragData[0] = col_1;
+}
+
+
+
+#endif""
+}
+SubProgram ""d3d11_9x "" {
+// Stats: 8 math
+Bind ""vertex"" Vertex
+Bind ""texcoord"" TexCoord0
+ConstBuffer ""$Globals"" 144
+Vector 112 [_MainTex_ST]
+ConstBuffer ""UnityPerCamera"" 144
+Vector 80 [_ProjectionParams]
+ConstBuffer ""UnityPerDraw"" 336
+Matrix 0 [glstate_matrix_mvp]
+BindCB  ""$Globals"" 0
+BindCB  ""UnityPerCamera"" 1
+BindCB  ""UnityPerDraw"" 2
+""vs_4_0_level_9_1
+eefiecedhgjplcgbmgicmeilgmgmmkllblamaacaabaaaaaaciaeaaaaaeaaaaaa
+daaaaaaaiiabaaaageadaaaaliadaaaaebgpgodjfaabaaaafaabaaaaaaacpopp
+aeabaaaaemaaaaaaadaaceaaaaaaeiaaaaaaeiaaaaaaceaaabaaeiaaaaaaahaa
+abaaabaaaaaaaaaaabaaafaaabaaacaaaaaaaaaaacaaaaaaaeaaadaaaaaaaaaa
+aaaaaaaaaaacpoppfbaaaaafahaaapkaaaaaaadpaaaaaaaaaaaaaaaaaaaaaaaa
+bpaaaaacafaaaaiaaaaaapjabpaaaaacafaaabiaabaaapjaaeaaaaaeaaaaadoa
+abaaoejaabaaoekaabaaookaafaaaaadaaaaapiaaaaaffjaaeaaoekaaeaaaaae
+aaaaapiaadaaoekaaaaaaajaaaaaoeiaaeaaaaaeaaaaapiaafaaoekaaaaakkja
+aaaaoeiaaeaaaaaeaaaaapiaagaaoekaaaaappjaaaaaoeiaafaaaaadabaaabia
+aaaaffiaacaaaakaafaaaaadabaaaiiaabaaaaiaahaaaakaafaaaaadabaaafia
+aaaapeiaahaaaakaacaaaaadabaaadoaabaakkiaabaaomiaaeaaaaaeaaaaadma
+aaaappiaaaaaoekaaaaaoeiaabaaaaacaaaaammaaaaaoeiaabaaaaacabaaamoa
+aaaaoeiappppaaaafdeieefcneabaaaaeaaaabaahfaaaaaafjaaaaaeegiocaaa
+aaaaaaaaaiaaaaaafjaaaaaeegiocaaaabaaaaaaagaaaaaafjaaaaaeegiocaaa
+acaaaaaaaeaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaaddcbabaaaabaaaaaa
+ghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaaddccabaaaabaaaaaagfaaaaad
+pccabaaaacaaaaaagiaaaaacacaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaa
+aaaaaaaaegiocaaaacaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+acaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaa
+aaaaaaaaegiocaaaacaaaaaaacaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaadaaaaaapgbpbaaaaaaaaaaa
+egaobaaaaaaaaaaadgaaaaafpccabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaal
+dccabaaaabaaaaaaegbabaaaabaaaaaaegiacaaaaaaaaaaaahaaaaaaogikcaaa
+aaaaaaaaahaaaaaadiaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaaakiacaaa
+abaaaaaaafaaaaaadiaaaaakncaabaaaabaaaaaaagahbaaaaaaaaaaaaceaaaaa
+aaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaacaaaaaakgaobaaa
+aaaaaaaaaaaaaaahdccabaaaacaaaaaakgakbaaaabaaaaaamgaabaaaabaaaaaa
+doaaaaabejfdeheoemaaaaaaacaaaaaaaiaaaaaadiaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+adadaaaafaepfdejfeejepeoaafeeffiedepepfceeaaklklepfdeheogiaaaaaa
+adaaaaaaaiaaaaaafaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaa
+fmaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaafmaaaaaaabaaaaaa
+aaaaaaaaadaaaaaaacaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffied
+epepfceeaaklklkl""
+}
+SubProgram ""gles3 "" {
+// Stats: 35 math, 10 textures
+""!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+
+in vec4 _glesVertex;
+in vec4 _glesMultiTexCoord0;
+uniform highp vec4 _ProjectionParams;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _MainTex_ST;
+out mediump vec2 xlv_TEXCOORD0;
+out highp vec4 xlv_TEXCOORD1;
+void main ()
+{
+  mediump vec2 tmpvar_1;
+  highp vec4 tmpvar_2;
+  tmpvar_2 = (glstate_matrix_mvp * _glesVertex);
+  highp vec2 tmpvar_3;
+  tmpvar_3 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  tmpvar_1 = tmpvar_3;
+  highp vec4 o_4;
+  highp vec4 tmpvar_5;
+  tmpvar_5 = (tmpvar_2 * 0.5);
+  highp vec2 tmpvar_6;
+  tmpvar_6.x = tmpvar_5.x;
+  tmpvar_6.y = (tmpvar_5.y * _ProjectionParams.x);
+  o_4.xy = (tmpvar_6 + tmpvar_5.w);
+  o_4.zw = tmpvar_2.zw;
+  gl_Position = tmpvar_2;
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD1 = o_4;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+
+layout(location=0) out mediump vec4 _glesFragData[4];
+uniform sampler2D _CameraDepthTexture;
+uniform sampler2D _MainTex;
+uniform highp vec2 _BlurDir;
+uniform highp vec2 _MainTex_TexelSize;
+in mediump vec2 xlv_TEXCOORD0;
+in highp vec4 xlv_TEXCOORD1;
+void main ()
+{
+  lowp vec4 col_1;
+  highp float depth_2;
+  lowp float tmpvar_3;
+  tmpvar_3 = textureProj (_CameraDepthTexture, xlv_TEXCOORD1).x;
+  depth_2 = tmpvar_3;
+  highp vec2 tmpvar_4;
+  tmpvar_4 = ((_BlurDir * _MainTex_TexelSize) * (1.0 - depth_2));
+  highp vec2 P_5;
+  P_5 = (xlv_TEXCOORD0 - (4.0 * tmpvar_4));
+  highp vec2 P_6;
+  P_6 = (xlv_TEXCOORD0 - (3.0 * tmpvar_4));
+  highp vec2 P_7;
+  P_7 = (xlv_TEXCOORD0 - (2.0 * tmpvar_4));
+  highp vec2 P_8;
+  P_8 = (xlv_TEXCOORD0 - tmpvar_4);
+  highp vec2 P_9;
+  P_9 = (xlv_TEXCOORD0 + tmpvar_4);
+  highp vec2 P_10;
+  P_10 = (xlv_TEXCOORD0 + (2.0 * tmpvar_4));
+  highp vec2 P_11;
+  P_11 = (xlv_TEXCOORD0 + (3.0 * tmpvar_4));
+  highp vec2 P_12;
+  P_12 = (xlv_TEXCOORD0 + (4.0 * tmpvar_4));
+  col_1.xyz = (((
+    ((((
+      ((texture (_MainTex, P_5) * 0.05) + (texture (_MainTex, P_6) * 0.09))
+     + 
+      (texture (_MainTex, P_7) * 0.12)
+    ) + (texture (_MainTex, P_8) * 0.15)) + (texture (_MainTex, xlv_TEXCOORD0) * 0.16)) + (texture (_MainTex, P_9) * 0.15))
+   + 
+    (texture (_MainTex, P_10) * 0.12)
+  ) + (texture (_MainTex, P_11) * 0.09)) + (texture (_MainTex, P_12) * 0.05)).xyz;
+  col_1.w = 1.0;
+  _glesFragData[0] = col_1;
+}
+
+
+
+#endif""
+}
+SubProgram ""metal "" {
+// Stats: 6 math
+Bind ""vertex"" ATTR0
+Bind ""texcoord"" ATTR1
+ConstBuffer ""$Globals"" 96
+Matrix 16 [glstate_matrix_mvp]
+Vector 0 [_ProjectionParams]
+Vector 80 [_MainTex_ST]
+""metal_vs
+#include <metal_stdlib>
+using namespace metal;
+struct xlatMtlShaderInput {
+  float4 _glesVertex [[attribute(0)]];
+  float4 _glesMultiTexCoord0 [[attribute(1)]];
+};
+struct xlatMtlShaderOutput {
+  float4 gl_Position [[position]];
+  half2 xlv_TEXCOORD0;
+  float4 xlv_TEXCOORD1;
+};
+struct xlatMtlShaderUniform {
+  float4 _ProjectionParams;
+  float4x4 glstate_matrix_mvp;
+  float4 _MainTex_ST;
+};
+vertex xlatMtlShaderOutput xlatMtlMain (xlatMtlShaderInput _mtl_i [[stage_in]], constant xlatMtlShaderUniform& _mtl_u [[buffer(0)]])
+{
+  xlatMtlShaderOutput _mtl_o;
+  half2 tmpvar_1;
+  float4 tmpvar_2;
+  tmpvar_2 = (_mtl_u.glstate_matrix_mvp * _mtl_i._glesVertex);
+  float2 tmpvar_3;
+  tmpvar_3 = ((_mtl_i._glesMultiTexCoord0.xy * _mtl_u._MainTex_ST.xy) + _mtl_u._MainTex_ST.zw);
+  tmpvar_1 = half2(tmpvar_3);
+  float4 o_4;
+  float4 tmpvar_5;
+  tmpvar_5 = (tmpvar_2 * 0.5);
+  float2 tmpvar_6;
+  tmpvar_6.x = tmpvar_5.x;
+  tmpvar_6.y = (tmpvar_5.y * _mtl_u._ProjectionParams.x);
+  o_4.xy = (tmpvar_6 + tmpvar_5.w);
+  o_4.zw = tmpvar_2.zw;
+  _mtl_o.gl_Position = tmpvar_2;
+  _mtl_o.xlv_TEXCOORD0 = tmpvar_1;
+  _mtl_o.xlv_TEXCOORD1 = o_4;
+  return _mtl_o;
+}
+
+""
+}
+}
+Program ""fp"" {
+SubProgram ""opengl "" {
+""!!GLSL""
+}
+SubProgram ""d3d9 "" {
+// Stats: 23 math, 10 textures
+Vector 0 [_BlurDir]
+Vector 1 [_MainTex_TexelSize]
+SetTexture 0 [_CameraDepthTexture] 2D 0
+SetTexture 1 [_MainTex] 2D 1
+""ps_2_0
+def c2, 0.0500000007, 2, 0.119999997, 0.150000006
+def c3, 0.159999996, 0, 0, 0
+def c4, 1, 4, 3, 0.0900000036
+dcl t0.xy
+dcl t1
+dcl_2d s0
+dcl_2d s1
+texldp r0, t1, s0
+add r0.x, -r0.x, c4.x
+mov r1.xy, c0
+mul r0.yz, r1.zxyw, c1.zxyw
+mul r1.xy, r0.x, r0.yzxw
+mad r2.xy, r1, -c4.z, t0
+mad r3.xy, r1, -c4.y, t0
+mad r4.xy, r1, -c2.y, t0
+mad r5.xy, r0.yzxw, -r0.x, t0
+mad r0.xy, r0.yzxw, r0.x, t0
+mad r6.xy, r1, c2.y, t0
+mad r7.xy, r1, c4.z, t0
+mad r1.xy, r1, c4.y, t0
+texld r2, r2, s1
+texld r3, r3, s1
+texld r4, r4, s1
+texld r0, r0, s1
+texld r5, r5, s1
+texld r8, t0, s1
+texld r6, r6, s1
+texld r1, r1, s1
+texld r7, r7, s1
+mul r2.xyz, r2, c4.w
+mad_pp r2.xyz, r3, c2.x, r2
+mad_pp r2.xyz, r4, c2.z, r2
+mad_pp r2.xyz, r5, c2.w, r2
+mad_pp r2.xyz, r8, c3.x, r2
+mad_pp r0.xyz, r0, c2.w, r2
+mad_pp r0.xyz, r6, c2.z, r0
+mad_pp r0.xyz, r7, c4.w, r0
+mad_pp r0.xyz, r1, c2.x, r0
+mov_pp r0.w, c4.x
+mov_pp oC0, r0
+
+""
+}
+SubProgram ""d3d11 "" {
+// Stats: 19 math, 10 textures
+SetTexture 0 [_CameraDepthTexture] 2D 0
+SetTexture 1 [_MainTex] 2D 1
+ConstBuffer ""$Globals"" 144
+Vector 96 [_BlurDir] 2
+Vector 128 [_MainTex_TexelSize] 2
+BindCB  ""$Globals"" 0
+""ps_4_0
+eefiecedmkafgkjbckmanebdfakeclfpgkjkcodeabaaaaaaamagaaaaadaaaaaa
+cmaaaaaajmaaaaaanaaaaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaafmaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadadaaaafmaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+apalaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
+cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcdeafaaaaeaaaaaaaenabaaaa
+fjaaaaaeegiocaaaaaaaaaaaajaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
+aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
+abaaaaaaffffaaaagcbaaaaddcbabaaaabaaaaaagcbaaaadlcbabaaaacaaaaaa
+gfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+egbabaaaacaaaaaapgbpbaaaacaaaaaaefaaaaajpcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaa
+akaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaajgcaabaaaaaaaaaaa
+agibcaaaaaaaaaaaagaaaaaaagibcaaaaaaaaaaaaiaaaaaadiaaaaahdcaabaaa
+abaaaaaaagaabaaaaaaaaaaajgafbaaaaaaaaaaadcaaaaanpcaabaaaacaaaaaa
+egaebaiaebaaaaaaabaaaaaaaceaaaaaaaaaiaeaaaaaiaeaaaaaeaeaaaaaeaea
+egbebaaaabaaaaaaefaaaaajpcaabaaaadaaaaaaogakbaaaacaaaaaaeghobaaa
+abaaaaaaaagabaaaabaaaaaaefaaaaajpcaabaaaacaaaaaaegaabaaaacaaaaaa
+eghobaaaabaaaaaaaagabaaaabaaaaaadiaaaaakhcaabaaaadaaaaaaegacbaaa
+adaaaaaaaceaaaaaomfblidnomfblidnomfblidnaaaaaaaadcaaaaamhcaabaaa
+acaaaaaaegacbaaaacaaaaaaaceaaaaamnmmemdnmnmmemdnmnmmemdnaaaaaaaa
+egacbaaaadaaaaaadcaaaaanmcaabaaaabaaaaaaagaebaiaebaaaaaaabaaaaaa
+aceaaaaaaaaaaaaaaaaaaaaaaaaaaaeaaaaaaaeaagbebaaaabaaaaaaefaaaaaj
+pcaabaaaadaaaaaaogakbaaaabaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaa
+dcaaaaamhcaabaaaacaaaaaaegacbaaaadaaaaaaaceaaaaaipmcpfdnipmcpfdn
+ipmcpfdnaaaaaaaaegacbaaaacaaaaaadcaaaaakmcaabaaaabaaaaaafgajbaia
+ebaaaaaaaaaaaaaaagaabaaaaaaaaaaaagbebaaaabaaaaaadcaaaaajdcaabaaa
+aaaaaaaajgafbaaaaaaaaaaaagaabaaaaaaaaaaaegbabaaaabaaaaaaefaaaaaj
+pcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaa
+efaaaaajpcaabaaaadaaaaaaogakbaaaabaaaaaaeghobaaaabaaaaaaaagabaaa
+abaaaaaadcaaaaamhcaabaaaacaaaaaaegacbaaaadaaaaaaaceaaaaajkjjbjdo
+jkjjbjdojkjjbjdoaaaaaaaaegacbaaaacaaaaaaefaaaaajpcaabaaaadaaaaaa
+egbabaaaabaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaadcaaaaamhcaabaaa
+acaaaaaaegacbaaaadaaaaaaaceaaaaaaknhcddoaknhcddoaknhcddoaaaaaaaa
+egacbaaaacaaaaaadcaaaaamhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaa
+jkjjbjdojkjjbjdojkjjbjdoaaaaaaaaegacbaaaacaaaaaadcaaaaammcaabaaa
+abaaaaaaagaebaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaeaaaaaaaea
+agbebaaaabaaaaaadcaaaaampcaabaaaacaaaaaaegaebaaaabaaaaaaaceaaaaa
+aaaaeaeaaaaaeaeaaaaaiaeaaaaaiaeaegbebaaaabaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaadcaaaaam
+hcaabaaaaaaaaaaaegacbaaaabaaaaaaaceaaaaaipmcpfdnipmcpfdnipmcpfdn
+aaaaaaaaegacbaaaaaaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaacaaaaaa
+eghobaaaabaaaaaaaagabaaaabaaaaaaefaaaaajpcaabaaaacaaaaaaogakbaaa
+acaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaadcaaaaamhcaabaaaaaaaaaaa
+egacbaaaabaaaaaaaceaaaaaomfblidnomfblidnomfblidnaaaaaaaaegacbaaa
+aaaaaaaadcaaaaamhccabaaaaaaaaaaaegacbaaaacaaaaaaaceaaaaamnmmemdn
+mnmmemdnmnmmemdnaaaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab""
+}
+SubProgram ""gles "" {
+""!!GLES""
+}
+SubProgram ""d3d11_9x "" {
+// Stats: 19 math, 10 textures
+SetTexture 0 [_CameraDepthTexture] 2D 0
+SetTexture 1 [_MainTex] 2D 1
+ConstBuffer ""$Globals"" 144
+Vector 96 [_BlurDir] 2
+Vector 128 [_MainTex_TexelSize] 2
+BindCB  ""$Globals"" 0
+""ps_4_0_level_9_1
+eefiecedgoapbibboiinfahkghbkadnalnnaekpmabaaaaaadmajaaaaaeaaaaaa
+daaaaaaafmadaaaajiaiaaaaaiajaaaaebgpgodjceadaaaaceadaaaaaaacpppp
+oaacaaaaeeaaaaaaacaacmaaaaaaeeaaaaaaeeaaacaaceaaaaaaeeaaaaaaaaaa
+abababaaaaaaagaaabaaaaaaaaaaaaaaaaaaaiaaabaaabaaaaaaaaaaaaacpppp
+fbaaaaafacaaapkaaaaaiadpaaaaiaeaaaaaeaeaomfblidnfbaaaaafadaaapka
+mnmmemdnaaaaaaeaipmcpfdnjkjjbjdofbaaaaafaeaaapkaaknhcddoaaaaaaaa
+aaaaaaaaaaaaaaaabpaaaaacaaaaaaiaaaaaadlabpaaaaacaaaaaaiaabaaapla
+bpaaaaacaaaaaajaaaaiapkabpaaaaacaaaaaajaabaiapkaagaaaaacaaaaaiia
+abaapplaafaaaaadaaaaadiaaaaappiaabaaoelaecaaaaadaaaaapiaaaaaoeia
+aaaioekaacaaaaadaaaaabiaaaaaaaibacaaaakaabaaaaacabaaadiaaaaaoeka
+afaaaaadaaaaagiaabaanciaabaanckaafaaaaadabaaadiaaaaaaaiaaaaamjia
+aeaaaaaeacaaadiaabaaoeiaacaakkkbaaaaoelaaeaaaaaeadaaadiaabaaoeia
+acaaffkbaaaaoelaaeaaaaaeaeaaadiaabaaoeiaadaaffkbaaaaoelaaeaaaaae
+afaaadiaaaaamjiaaaaaaaibaaaaoelaaeaaaaaeaaaaadiaaaaamjiaaaaaaaia
+aaaaoelaaeaaaaaeagaaadiaabaaoeiaadaaffkaaaaaoelaaeaaaaaeahaaadia
+abaaoeiaacaakkkaaaaaoelaaeaaaaaeabaaadiaabaaoeiaacaaffkaaaaaoela
+ecaaaaadacaaapiaacaaoeiaabaioekaecaaaaadadaaapiaadaaoeiaabaioeka
+ecaaaaadaeaaapiaaeaaoeiaabaioekaecaaaaadaaaaapiaaaaaoeiaabaioeka
+ecaaaaadafaaapiaafaaoeiaabaioekaecaaaaadaiaaapiaaaaaoelaabaioeka
+ecaaaaadagaaapiaagaaoeiaabaioekaecaaaaadabaaapiaabaaoeiaabaioeka
+ecaaaaadahaaapiaahaaoeiaabaioekaafaaaaadacaaahiaacaaoeiaacaappka
+aeaaaaaeacaachiaadaaoeiaadaaaakaacaaoeiaaeaaaaaeacaachiaaeaaoeia
+adaakkkaacaaoeiaaeaaaaaeacaachiaafaaoeiaadaappkaacaaoeiaaeaaaaae
+acaachiaaiaaoeiaaeaaaakaacaaoeiaaeaaaaaeaaaachiaaaaaoeiaadaappka
+acaaoeiaaeaaaaaeaaaachiaagaaoeiaadaakkkaaaaaoeiaaeaaaaaeaaaachia
+ahaaoeiaacaappkaaaaaoeiaaeaaaaaeaaaachiaabaaoeiaadaaaakaaaaaoeia
+abaaaaacaaaaaiiaacaaaakaabaaaaacaaaicpiaaaaaoeiappppaaaafdeieefc
+deafaaaaeaaaaaaaenabaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafkaaaaad
+aagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaa
+ffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaagcbaaaaddcbabaaaabaaaaaa
+gcbaaaadlcbabaaaacaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaa
+aoaaaaahdcaabaaaaaaaaaaaegbabaaaacaaaaaapgbpbaaaacaaaaaaefaaaaaj
+pcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaa
+aaaaaaaibcaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
+diaaaaajgcaabaaaaaaaaaaaagibcaaaaaaaaaaaagaaaaaaagibcaaaaaaaaaaa
+aiaaaaaadiaaaaahdcaabaaaabaaaaaaagaabaaaaaaaaaaajgafbaaaaaaaaaaa
+dcaaaaanpcaabaaaacaaaaaaegaebaiaebaaaaaaabaaaaaaaceaaaaaaaaaiaea
+aaaaiaeaaaaaeaeaaaaaeaeaegbebaaaabaaaaaaefaaaaajpcaabaaaadaaaaaa
+ogakbaaaacaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaefaaaaajpcaabaaa
+acaaaaaaegaabaaaacaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaadiaaaaak
+hcaabaaaadaaaaaaegacbaaaadaaaaaaaceaaaaaomfblidnomfblidnomfblidn
+aaaaaaaadcaaaaamhcaabaaaacaaaaaaegacbaaaacaaaaaaaceaaaaamnmmemdn
+mnmmemdnmnmmemdnaaaaaaaaegacbaaaadaaaaaadcaaaaanmcaabaaaabaaaaaa
+agaebaiaebaaaaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaeaaaaaaaea
+agbebaaaabaaaaaaefaaaaajpcaabaaaadaaaaaaogakbaaaabaaaaaaeghobaaa
+abaaaaaaaagabaaaabaaaaaadcaaaaamhcaabaaaacaaaaaaegacbaaaadaaaaaa
+aceaaaaaipmcpfdnipmcpfdnipmcpfdnaaaaaaaaegacbaaaacaaaaaadcaaaaak
+mcaabaaaabaaaaaafgajbaiaebaaaaaaaaaaaaaaagaabaaaaaaaaaaaagbebaaa
+abaaaaaadcaaaaajdcaabaaaaaaaaaaajgafbaaaaaaaaaaaagaabaaaaaaaaaaa
+egbabaaaabaaaaaaefaaaaajpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+abaaaaaaaagabaaaabaaaaaaefaaaaajpcaabaaaadaaaaaaogakbaaaabaaaaaa
+eghobaaaabaaaaaaaagabaaaabaaaaaadcaaaaamhcaabaaaacaaaaaaegacbaaa
+adaaaaaaaceaaaaajkjjbjdojkjjbjdojkjjbjdoaaaaaaaaegacbaaaacaaaaaa
+efaaaaajpcaabaaaadaaaaaaegbabaaaabaaaaaaeghobaaaabaaaaaaaagabaaa
+abaaaaaadcaaaaamhcaabaaaacaaaaaaegacbaaaadaaaaaaaceaaaaaaknhcddo
+aknhcddoaknhcddoaaaaaaaaegacbaaaacaaaaaadcaaaaamhcaabaaaaaaaaaaa
+egacbaaaaaaaaaaaaceaaaaajkjjbjdojkjjbjdojkjjbjdoaaaaaaaaegacbaaa
+acaaaaaadcaaaaammcaabaaaabaaaaaaagaebaaaabaaaaaaaceaaaaaaaaaaaaa
+aaaaaaaaaaaaaaeaaaaaaaeaagbebaaaabaaaaaadcaaaaampcaabaaaacaaaaaa
+egaebaaaabaaaaaaaceaaaaaaaaaeaeaaaaaeaeaaaaaiaeaaaaaiaeaegbebaaa
+abaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaabaaaaaa
+aagabaaaabaaaaaadcaaaaamhcaabaaaaaaaaaaaegacbaaaabaaaaaaaceaaaaa
+ipmcpfdnipmcpfdnipmcpfdnaaaaaaaaegacbaaaaaaaaaaaefaaaaajpcaabaaa
+abaaaaaaegaabaaaacaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaefaaaaaj
+pcaabaaaacaaaaaaogakbaaaacaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaa
+dcaaaaamhcaabaaaaaaaaaaaegacbaaaabaaaaaaaceaaaaaomfblidnomfblidn
+omfblidnaaaaaaaaegacbaaaaaaaaaaadcaaaaamhccabaaaaaaaaaaaegacbaaa
+acaaaaaaaceaaaaamnmmemdnmnmmemdnmnmmemdnaaaaaaaaegacbaaaaaaaaaaa
+dgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadpdoaaaaabejfdeheogiaaaaaa
+adaaaaaaaiaaaaaafaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaa
+fmaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadadaaaafmaaaaaaabaaaaaa
+aaaaaaaaadaaaaaaacaaaaaaapalaaaafdfgfpfaepfdejfeejepeoaafeeffied
+epepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaa
+aaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl""
+}
+SubProgram ""gles3 "" {
+""!!GLES3""
+}
+SubProgram ""metal "" {
+// Stats: 35 math, 10 textures
+SetTexture 0 [_CameraDepthTexture] 2D 0
+SetTexture 1 [_MainTex] 2D 1
+ConstBuffer ""$Globals"" 16
+Vector 0 [_BlurDir] 2
+Vector 8 [_MainTex_TexelSize] 2
+""metal_fs
+#include <metal_stdlib>
+using namespace metal;
+struct xlatMtlShaderInput {
+  half2 xlv_TEXCOORD0;
+  float4 xlv_TEXCOORD1;
+};
+struct xlatMtlShaderOutput {
+  half4 _glesFragData_0 [[color(0)]];
+};
+struct xlatMtlShaderUniform {
+  float2 _BlurDir;
+  float2 _MainTex_TexelSize;
+};
+fragment xlatMtlShaderOutput xlatMtlMain (xlatMtlShaderInput _mtl_i [[stage_in]], constant xlatMtlShaderUniform& _mtl_u [[buffer(0)]]
+  ,   texture2d<half> _CameraDepthTexture [[texture(0)]], sampler _mtlsmp__CameraDepthTexture [[sampler(0)]]
+  ,   texture2d<half> _MainTex [[texture(1)]], sampler _mtlsmp__MainTex [[sampler(1)]])
+{
+  xlatMtlShaderOutput _mtl_o;
+  half4 col_1;
+  float depth_2;
+  half tmpvar_3;
+  tmpvar_3 = _CameraDepthTexture.sample(_mtlsmp__CameraDepthTexture, ((float2)(_mtl_i.xlv_TEXCOORD1).xy / (float)(_mtl_i.xlv_TEXCOORD1).w)).x;
+  depth_2 = float(tmpvar_3);
+  float2 tmpvar_4;
+  tmpvar_4 = ((_mtl_u._BlurDir * _mtl_u._MainTex_TexelSize) * (1.0 - depth_2));
+  float2 P_5;
+  P_5 = ((float2)_mtl_i.xlv_TEXCOORD0 - (4.0 * tmpvar_4));
+  float2 P_6;
+  P_6 = ((float2)_mtl_i.xlv_TEXCOORD0 - (3.0 * tmpvar_4));
+  float2 P_7;
+  P_7 = ((float2)_mtl_i.xlv_TEXCOORD0 - (2.0 * tmpvar_4));
+  float2 P_8;
+  P_8 = ((float2)_mtl_i.xlv_TEXCOORD0 - tmpvar_4);
+  float2 P_9;
+  P_9 = ((float2)_mtl_i.xlv_TEXCOORD0 + tmpvar_4);
+  float2 P_10;
+  P_10 = ((float2)_mtl_i.xlv_TEXCOORD0 + (2.0 * tmpvar_4));
+  float2 P_11;
+  P_11 = ((float2)_mtl_i.xlv_TEXCOORD0 + (3.0 * tmpvar_4));
+  float2 P_12;
+  P_12 = ((float2)_mtl_i.xlv_TEXCOORD0 + (4.0 * tmpvar_4));
+  col_1.xyz = (((
+    ((((
+      ((_MainTex.sample(_mtlsmp__MainTex, (float2)(P_5)) * (half)0.05) + (_MainTex.sample(_mtlsmp__MainTex, (float2)(P_6)) * (half)0.09))
+     + 
+      (_MainTex.sample(_mtlsmp__MainTex, (float2)(P_7)) * (half)0.12)
+    ) + (_MainTex.sample(_mtlsmp__MainTex, (float2)(P_8)) * (half)0.15)) + (_MainTex.sample(_mtlsmp__MainTex, (float2)(_mtl_i.xlv_TEXCOORD0)) * (half)0.16)) + (_MainTex.sample(_mtlsmp__MainTex, (float2)(P_9)) * (half)0.15))
+   + 
+    (_MainTex.sample(_mtlsmp__MainTex, (float2)(P_10)) * (half)0.12)
+  ) + (_MainTex.sample(_mtlsmp__MainTex, (float2)(P_11)) * (half)0.09)) + (_MainTex.sample(_mtlsmp__MainTex, (float2)(P_12)) * (half)0.05)).xyz;
+  col_1.w = half(1.0);
+  _mtl_o._glesFragData_0 = col_1;
+  return _mtl_o;
+}
+
+""
+}
+}
+ }
+}
+}";
+
         public static readonly string buildingReplacementV2 =
             @"// Compiled shader for all platforms, uncompressed size: 342.1KB
 

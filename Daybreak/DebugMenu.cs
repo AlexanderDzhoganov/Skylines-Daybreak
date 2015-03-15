@@ -16,7 +16,7 @@ namespace Daybreak
 
         private Timer timer;
         private HeadlightsController headlights;
-        private FogEffect fogEffect;
+     //   private FogEffect fogEffect;
         private BuildingGlowRenderer glowRenderer;
 
         void Awake()
@@ -60,7 +60,7 @@ namespace Daybreak
                 return;
             }
 
-            if (fogEffect == null)
+          /*  if (fogEffect == null)
             {
                 fogEffect = FindObjectOfType<FogEffect>();
             }
@@ -69,7 +69,7 @@ namespace Daybreak
             {
                 return;
             }
-
+            */
             if (glowRenderer == null)
             {
                 glowRenderer = FindObjectOfType<BuildingGlowRenderer>();
@@ -195,7 +195,7 @@ namespace Daybreak
             GUILayout.EndHorizontal();
             */
 
-            if (fogEffect.m_Sun != null)
+/*if (fogEffect.m_Sun != null)
             {
                 var pos = fogEffect.m_Sun.position;
                 pos.x = FloatField("x", pos.x);
@@ -208,7 +208,7 @@ namespace Daybreak
                 var go = new GameObject();
                 fogEffect.m_Sun = go.transform;
             }
-
+            */
             VehicleManager vManager = Singleton<VehicleManager>.instance;
             GUILayout.Label("Vehicle count (ItemCount): " + vManager.m_vehicles.ItemCount());
             GUILayout.Label("Vehicle count: " + vManager.m_vehicleCount);
