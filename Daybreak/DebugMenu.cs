@@ -17,6 +17,7 @@ namespace Daybreak
         private Timer timer;
         private HeadlightsController headlights;
         private FogEffect fogEffect;
+        private BuildingGlowRenderer glowRenderer;
 
         void Awake()
         {
@@ -69,11 +70,31 @@ namespace Daybreak
                 return;
             }
 
+            if (glowRenderer == null)
+            {
+                glowRenderer = FindObjectOfType<BuildingGlowRenderer>();
+            }
+
+            if (glowRenderer == null)
+            {
+                return;
+            }
+    
             scrollViewPos = GUILayout.BeginScrollView(scrollViewPos);
 
             GUILayout.Label("Camera position");
             var c = Camera.main.transform.position;
             GUILayout.Label(String.Format("x: {0}, y: {1}, z: {2}", c.x, c.y, c.z));
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Building glow intensity");
+            glowRenderer.glowIntensity = GUILayout.HorizontalSlider(glowRenderer.glowIntensity, 0.0f, 2.0f);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Glow blur factor");
+            glowRenderer.blurFactor = GUILayout.HorizontalSlider(glowRenderer.blurFactor, 0.0f, 2.0f);
+            GUILayout.EndHorizontal();
 
             /* GUILayout.Label("Lights");
 
@@ -280,8 +301,7 @@ namespace Daybreak
 
             if (GUILayout.Button("Kill envmap"))
             {
-                Shader.SetGlobalTexture("_EnvironmentCubemap", null);
-                Shader.SetGlobalColor("_EnvironmentFogColor", Color.black);
+
 
                 //var materials = Resources.FindObjectsOfTypeAll<Material>();
                 //foreach (var material in materials)

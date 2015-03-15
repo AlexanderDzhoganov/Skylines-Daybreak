@@ -48,13 +48,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildingGlowRenderer.cs" />
-    <Compile Include="CameraHook.cs" />
     <Compile Include="DebugMenu.cs" />
     <Compile Include="HeadlightsController.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderingController.cs" />
     <Compile Include="Shaders.cs" />
+    <Compile Include="SkyboxManager.cs" />
     <Compile Include="StreetLightEffectInfo.cs" />
     <Compile Include="SunManager.cs" />
     <Compile Include="Timer.cs" />

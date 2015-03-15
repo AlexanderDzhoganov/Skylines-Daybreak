@@ -8,7 +8,7 @@ namespace Daybreak
     public class SunManager : MonoBehaviour
     {
 
-        private static readonly float GlobalAmbientIntensity = 0.7f;
+        private static readonly float GlobalAmbientIntensity = 1.0f;
         private static readonly float GlobalSunIntensity = 1.0f;
 
         public static Vector3 GetSunDirectionByTimeOfDay(TimeOfDay timeOfDay)
@@ -93,9 +93,9 @@ namespace Daybreak
                 case TimeOfDay.Sunset:
                     return XKCDColors.Yellowish * 0.4f;
                 case TimeOfDay.Night:
-                    return XKCDColors.DarkBlue;
+                    return XKCDColors.BluishPurple;
                 case TimeOfDay.LateNight:
-                    return XKCDColors.VeryDarkBlue;
+                    return XKCDColors.DarkSkyBlue;
             }
 
             return Color.magenta;
@@ -108,8 +108,39 @@ namespace Daybreak
             return Color.Lerp(colorA, colorB, t);
         }
 
+        public static Color GetFogColorByTimeOfDay(TimeOfDay timeOfDay)
+        {
+            switch (timeOfDay)
+            {
+                case TimeOfDay.Sunrise:
+                    return XKCDColors.VeryLightBlue * 0.6f;
+                case TimeOfDay.Morning:
+                    return XKCDColors.VeryLightBlue * 0.9f;
+                case TimeOfDay.Noon:
+                    return XKCDColors.White * 1.0f;
+                case TimeOfDay.Afternoon:
+                    return XKCDColors.OffWhite * 0.6f;
+                case TimeOfDay.Sunset:
+                    return XKCDColors.Yellowish * 0.4f;
+                case TimeOfDay.Night:
+                    return XKCDColors.Black;
+                case TimeOfDay.LateNight:
+                    return XKCDColors.Black;
+            }
+
+            return Color.magenta;
+        }
+
+        public static Color GetFogColorByTimeOfDay(TimeOfDay timeOfDay, float t)
+        {
+            var colorA = GetFogColorByTimeOfDay(timeOfDay);
+            var colorB = GetFogColorByTimeOfDay(TimeUtils.GetNextTimeOfDay(timeOfDay));
+            return Color.Lerp(colorA, colorB, t);
+        }
+
         private Timer timer;
         private Light light;
+        private RenderProperties renderProperties;
 
         void Update()
         {
@@ -131,16 +162,26 @@ namespace Daybreak
                 }
             }
 
+            if (renderProperties == null)
+            {
+                renderProperties = FindObjectOfType<RenderProperties>();
+            }
+
             RenderSettings.ambientMode = AmbientMode.Flat;
             RenderSettings.ambientIntensity = GlobalAmbientIntensity;
-            RenderSettings.ambientGroundColor = Color.black;
-            RenderSettings.ambientGroundColor = Color.black;
+            RenderSettings.ambientGroundColor = GetAmbientColorByTimeOfDay(timer.TimeOfDay, timer.T);
             RenderSettings.ambientLight = Color.black;
             RenderSettings.ambientSkyColor = GetAmbientColorByTimeOfDay(timer.TimeOfDay, timer.T);
             RenderSettings.customReflection = null;
-            RenderSettings.skybox = null;
+
+            renderProperties.m_ambientLight = RenderSettings.ambientSkyColor;
+            renderProperties.m_fogColor = GetFogColorByTimeOfDay(timer.TimeOfDay, timer.T);
+            renderProperties.m_volumeFogColor = GetFogColorByTimeOfDay(timer.TimeOfDay, timer.T);
+            renderProperties.m_pollutionFogColor = GetFogColorByTimeOfDay(timer.TimeOfDay, timer.T);
 
             light.color = GetSunColorByTimeOfDay(timer.TimeOfDay, timer.T);
+            renderProperties.m_inscatteringColor = light.color;
+
             light.intensity = GlobalSunIntensity;
 
             var sunDirection = GetSunDirectionByTimeOfDay(timer.TimeOfDay, timer.T);
