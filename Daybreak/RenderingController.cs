@@ -11,6 +11,7 @@ namespace Daybreak
         {
             var controller = FindObjectOfType<CameraController>();
             hook = controller.gameObject.AddComponent<CameraHook>();
+            controller.gameObject.AddComponent<BuildingGlowRenderer>();
         }
 
     }

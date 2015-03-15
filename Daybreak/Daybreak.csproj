@@ -47,22 +47,26 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuildingGlowRenderer.cs" />
     <Compile Include="CameraHook.cs" />
     <Compile Include="DebugMenu.cs" />
     <Compile Include="HeadlightsController.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderingController.cs" />
+    <Compile Include="Shaders.cs" />
     <Compile Include="StreetLightEffectInfo.cs" />
     <Compile Include="SunManager.cs" />
     <Compile Include="Timer.cs" />
     <Compile Include="TimeUtil.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="Util.cs" />
     <Compile Include="XKCDColors.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy Daybreak.dll "C:\Users\nlight\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\Daybreak"</PostBuildEvent>
+    <PostBuildEvent>del "C:\Users\nlight\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\Daybreak\Daybreak.dll"
+copy Daybreak.dll "C:\Users\nlight\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\Daybreak"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

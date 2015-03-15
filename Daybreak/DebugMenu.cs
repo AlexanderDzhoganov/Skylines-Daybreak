@@ -68,6 +68,7 @@ namespace Daybreak
             {
                 return;
             }
+
             scrollViewPos = GUILayout.BeginScrollView(scrollViewPos);
 
             GUILayout.Label("Camera position");
@@ -187,13 +188,12 @@ namespace Daybreak
                 fogEffect.m_Sun = go.transform;
             }
 
-
-         
             VehicleManager vManager = Singleton<VehicleManager>.instance;
             GUILayout.Label("Vehicle count (ItemCount): " + vManager.m_vehicles.ItemCount());
             GUILayout.Label("Vehicle count: " + vManager.m_vehicleCount);
             GUILayout.Label("Active headlights: " + headlights.activeHeadlights.Count);
 
+         
             var loadedProps = PrefabCollection<PropInfo>.LoadedCount();
             GUILayout.Label("Loaded props: " + loadedProps);
 
