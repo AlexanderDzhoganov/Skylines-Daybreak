@@ -41,8 +41,8 @@ namespace Daybreak
         private RenderTexture rt;
         private RenderTexture rtBlurH, rtBlurV;
 
-        public float glowIntensity = 1.0f;
-        public Color glowColor = new Color(0.862f, 0.862f, 0.831f, 1.0f);
+        public float glowIntensity = 0.4f;
+        public Color glowColor = Color.white;
         public float blurFactor = 1.0f;
 
         private int blurDownscale = 2;

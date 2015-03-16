@@ -30,12 +30,6 @@ namespace Daybreak
             {
                 showUI = !showUI;
             }
-
-            if (Input.GetKeyDown(KeyCode.F7))
-            {
-                Screenshot.Capture();
-                Log.Warning("SCREENSHOT");
-            }
         }
 
         void OnGUI()

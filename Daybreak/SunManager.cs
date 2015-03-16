@@ -123,9 +123,9 @@ namespace Daybreak
                 case TimeOfDay.Sunset:
                     return XKCDColors.Yellowish * 0.4f;
                 case TimeOfDay.Night:
-                    return XKCDColors.Black;
+                    return XKCDColors.BluishPurple * 0.025f;
                 case TimeOfDay.LateNight:
-                    return XKCDColors.Black;
+                    return XKCDColors.DarkSkyBlue * 0.025f;
             }
 
             return Color.magenta;
@@ -177,8 +177,7 @@ namespace Daybreak
             renderProperties.m_ambientLight = RenderSettings.ambientSkyColor;
             renderProperties.m_fogColor = GetFogColorByTimeOfDay(timer.TimeOfDay, timer.T);
             renderProperties.m_volumeFogColor = GetFogColorByTimeOfDay(timer.TimeOfDay, timer.T);
-            renderProperties.m_pollutionFogColor = GetFogColorByTimeOfDay(timer.TimeOfDay, timer.T);
-
+          //  renderProperties.m_pollutionFogColor = GetFogColorByTimeOfDay(timer.TimeOfDay, timer.T);
             light.color = GetSunColorByTimeOfDay(timer.TimeOfDay, timer.T);
             renderProperties.m_inscatteringColor = light.color;
 
