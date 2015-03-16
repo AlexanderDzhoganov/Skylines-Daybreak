@@ -228,6 +228,14 @@ namespace Daybreak
             GUILayout.Label("Time of day: " + timer.TimeOfDay);
             GUILayout.Label("T: " + timer.T);
 
+            if (GUILayout.Button("dump streetlight info"))
+            {
+                string t = "";
+                
+
+               File.WriteAllText("C:\\Users\\nlight\\Desktop\\netlaneprops.txt", t);
+            }
+
             if (GUILayout.Button("export props"))
             {
                 string t = "";

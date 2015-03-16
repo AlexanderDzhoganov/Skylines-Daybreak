@@ -55,6 +55,7 @@
     <Compile Include="RenderingController.cs" />
     <Compile Include="Shaders.cs" />
     <Compile Include="SkyboxManager.cs" />
+    <Compile Include="StreetlightController.cs" />
     <Compile Include="StreetLightEffectInfo.cs" />
     <Compile Include="SunManager.cs" />
     <Compile Include="Timer.cs" />

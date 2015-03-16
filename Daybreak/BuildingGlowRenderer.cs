@@ -49,6 +49,9 @@ namespace Daybreak
 
         private int blurDownscale = 4;
 
+        private int buildingsCullingMask = 0;
+        private int occludersCullingMask = 0;
+
         void FadeInBuildingLights()
         {
             fadingInBuildingLights = true;
@@ -85,6 +88,17 @@ namespace Daybreak
             dummyGO = new GameObject();
             dummyCamera = dummyGO.AddComponent<Camera>();
             dummyCamera.enabled = false;
+
+            buildingsCullingMask = 1 << LayerMask.NameToLayer("Buildings");
+
+            occludersCullingMask |= 1 << LayerMask.NameToLayer("Props");
+            occludersCullingMask |= 1 << LayerMask.NameToLayer("Terrain");
+            occludersCullingMask |= 1 << LayerMask.NameToLayer("Decoration");
+            occludersCullingMask |= 1 << LayerMask.NameToLayer("Trees");
+            occludersCullingMask |= 1 << LayerMask.NameToLayer("Vehicles");
+            occludersCullingMask |= 1 << LayerMask.NameToLayer("Citizens");
+            occludersCullingMask |= 1 << LayerMask.NameToLayer("PowerLines");
+            occludersCullingMask |= 1 << LayerMask.NameToLayer("Road");
         }
 
         void LateUpdate()
@@ -130,7 +144,12 @@ namespace Daybreak
                 }
             }
 
-            RenderBuildingWindowsToTexture(rt);
+            if (!buildingLightsState && !fadingInBuildingLights && !fadingOutBuildingLights)
+            {
+                return;
+            }
+            
+            RenderBuildingsToTexture(rt, buildingWindowsReplacement);
         }
 
         void OnRenderImage(RenderTexture src, RenderTexture dst)
@@ -159,25 +178,14 @@ namespace Daybreak
             Graphics.Blit(src, dst, buildingsGlowPP);
         }
 
-        public void RenderBuildingWindowsToTexture(RenderTexture target)
-        {
-            RenderBuildingsToTexture(target, buildingWindowsReplacement);
-        }
-
         public void RenderBuildingsToTexture(RenderTexture target, Shader replacement)
         {
-            renderManager.m_outOfInstances = false;
-            PrefabPool.m_canCreateInstances = 1;
-            renderManager.UpdateCameraInfo();
-            UpdateColorMap();
-            
             var cameraInfo = renderManager.CurrentCameraInfo;
             dummyCamera.CopyFrom(mainCamera);
             dummyCamera.backgroundColor = Color.black;
 
             dummyCamera.targetTexture = rt;
-            dummyCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("Buildings"));
-            Util.CallVoidMethod(renderManager, "LateUpdate");
+            dummyCamera.cullingMask = occludersCullingMask;
             dummyCamera.Render();
             dummyCamera.clearFlags = CameraClearFlags.Nothing;
 
@@ -188,20 +196,11 @@ namespace Daybreak
             PrepareRenderGroups(cameraInfo);
             EndRenderingImpl(cameraInfo);
 
-            dummyCamera.cullingMask = 1 << LayerMask.NameToLayer("Buildings");
+            dummyCamera.cullingMask = buildingsCullingMask;
             dummyCamera.RenderWithShader(replacement, "");
             dummyCamera.targetTexture = null;
         }
-
-        private void UpdateColorMap()
-        {
-            if (Singleton<BuildingManager>.instance.UpdateColorMap(renderManager.m_objectColorMap) ||
-                Singleton<NetManager>.instance.UpdateColorMap(renderManager.m_objectColorMap))
-            {
-                renderManager.m_objectColorMap.Apply(false);
-            }
-        }
-
+        
         void PrepareRenderGroups(RenderManager.CameraInfo cameraInfo)
         {
             try

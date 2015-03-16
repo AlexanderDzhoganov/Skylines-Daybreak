@@ -34,6 +34,7 @@ namespace Daybreak
             go.AddComponent<Timer>();
             go.AddComponent<DebugMenu>();
             go.AddComponent<HeadlightsController>();
+            go.AddComponent<StreetlightController>();
 
         }
 

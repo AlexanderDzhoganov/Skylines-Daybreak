@@ -57,7 +57,7 @@ namespace Daybreak
             return (Q)field.GetValue(o);
         }
 
-        public static void WritePrivate<T, Q>(T o, string fieldName, object value)
+        public static void WritePrivate<T>(T o, string fieldName, object value)
         {
             var fields = typeof(T).GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             FieldInfo field = null;
