@@ -74,5 +74,11 @@ namespace Daybreak
             field.SetValue(o, value);
         }
 
+        public static void CallVoidMethod<T>(T o, string methodName)
+        {
+            MethodInfo dynMethod = typeof(T).GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            dynMethod.Invoke(o, new object[] {});
+        }
+
     }
 }

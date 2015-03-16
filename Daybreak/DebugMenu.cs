@@ -90,6 +90,10 @@ namespace Daybreak
             glowRenderer.blurFactor = GUILayout.HorizontalSlider(glowRenderer.blurFactor, 0.0f, 2.0f);
             GUILayout.EndHorizontal();
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Debug glow renderer");
+            glowRenderer.debugMode = GUILayout.Toggle(glowRenderer.debugMode, "");
+            GUILayout.EndHorizontal();
             /* GUILayout.Label("Lights");
 
 

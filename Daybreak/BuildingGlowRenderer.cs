@@ -45,7 +45,9 @@ namespace Daybreak
         public Color glowColor = Color.white;
         public float blurFactor = 1.0f;
 
-        private int blurDownscale = 2;
+        public bool debugMode = false;
+
+        private int blurDownscale = 4;
 
         void FadeInBuildingLights()
         {
@@ -76,7 +78,7 @@ namespace Daybreak
             int w = Camera.main.pixelWidth/blurDownscale;
             int h = Camera.main.pixelHeight/blurDownscale;
 
-            rt = new RenderTexture(w, h, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
+            rt = new RenderTexture(w, h, 24, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
             rtBlurH = new RenderTexture(w, h, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
             rtBlurV = new RenderTexture(w, h, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
 
@@ -145,6 +147,12 @@ namespace Daybreak
             glowBlurPP.SetVector("_BlurDir", new Vector4(0.0f, blurFactor, 0.0f, 0.0f));
             Graphics.Blit(rtBlurH, rtBlurV, glowBlurPP);
 
+            if (debugMode)
+            {
+                Graphics.Blit(rtBlurV, dst);
+                return;
+            }
+
             buildingsGlowPP.SetTexture("_GlowTex", rtBlurV);
             buildingsGlowPP.SetFloat("_GlowIntensity", glowIntensity * fadingBuildingLightsFactor);
             buildingsGlowPP.SetColor("_GlowColor", glowColor);
@@ -162,17 +170,25 @@ namespace Daybreak
             PrefabPool.m_canCreateInstances = 1;
             renderManager.UpdateCameraInfo();
             UpdateColorMap();
+            
             var cameraInfo = renderManager.CurrentCameraInfo;
-            cameraInfo.m_camera = dummyCamera;
+            dummyCamera.CopyFrom(mainCamera);
+            dummyCamera.backgroundColor = Color.black;
+
+            dummyCamera.targetTexture = rt;
+            dummyCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("Buildings"));
+            Util.CallVoidMethod(renderManager, "LateUpdate");
+            dummyCamera.Render();
+            dummyCamera.clearFlags = CameraClearFlags.Nothing;
+
+            RenderTexture.active = rt;
+            GL.Clear(false, true, Color.black);
 
             BeginRenderingImpl(cameraInfo);
             PrepareRenderGroups(cameraInfo);
             EndRenderingImpl(cameraInfo);
 
-            dummyCamera.CopyFrom(mainCamera);
-            dummyCamera.backgroundColor = Color.black;
-
-            dummyCamera.targetTexture = rt;
+            dummyCamera.cullingMask = 1 << LayerMask.NameToLayer("Buildings");
             dummyCamera.RenderWithShader(replacement, "");
             dummyCamera.targetTexture = null;
         }
