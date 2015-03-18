@@ -1,4 +1,5 @@
-﻿using ColossalFramework;
+﻿using System.IO;
+using ColossalFramework;
 using UnityEngine;
 
 namespace Daybreak
@@ -8,19 +9,37 @@ namespace Daybreak
     {
 
         public int count;
-        public Vector3[] positions;
-        public float[] angles;
+        public Matrix4x4[] trs;
+
+        public Texture2D lampTexture;
+        public Material lampMaterial;
+        public Vector3 lampSpriteScale = Vector3.one;
+
+        private Mesh quadMesh;
+        private int roadLayer;
 
         void Awake()
         {
-            positions = new Vector3[65535];
-            angles = new float[65535];
+            trs = new Matrix4x4[65535];
+
+            var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            quadMesh = go.GetComponent<MeshFilter>().mesh;
+
+            lampTexture = new Texture2D(512, 512);
+            lampTexture.LoadImage(File.ReadAllBytes("C:\\Users\\nlight\\Desktop\\lamp_sprite.png"));
+
+            lampMaterial = new Material(Shader.Find("Diffuse"));
+            lampMaterial.mainTexture = lampTexture;
+
+            roadLayer = LayerMask.NameToLayer("Road");
         }
 
-        void Update()
+        void LateUpdate()
         {
             FetchStreetlights();
         }
+
+        private int logLimit = 50;
 
         private void FetchStreetlights()
         {
@@ -28,13 +47,21 @@ namespace Daybreak
 
             var netManager = Singleton<NetManager>.instance;
 
-            for (int i = 0; i < netManager.m_segments.m_buffer.Length; i++)
+            for (int i = 0; i < netManager.m_lanes.m_buffer.Length; i++)
             {
-                if ((netManager.m_segments.m_buffer[i].m_flags & (NetSegment.Flags.Created | NetSegment.Flags.Deleted)) != NetSegment.Flags.Created)
+                var flags = netManager.m_lanes.m_buffer[i].m_flags;
+
+                if ((netManager.m_lanes.m_buffer[i].m_flags & ((ushort)NetLane.Flags.Created | (ushort)NetLane.Flags.Deleted)) != (ushort)NetLane.Flags.Created)
                 {
                     continue;
                 }
 
+                var lane = netManager.m_lanes.m_buffer[i];
+
+              //  var segment = netManager.m_segments.m_buffer[lane.m_segment];
+              //  segment.
+
+                /*
                 NetSegment segment = netManager.m_segments.m_buffer[i];
                 if (segment.Info == null)
                 {
@@ -45,28 +72,8 @@ namespace Daybreak
                 {
                     continue;
                 }
+                */
 
-                for (int q = 0; q < segment.Info.m_lanes.Length; q++)
-                {
-                    NetInfo.Lane lane = segment.Info.m_lanes[q];
-
-                    var props = lane.m_laneProps;
-                    if (lane.m_laneProps != null)
-                    {
-                        foreach (var prop in props.m_props)
-                        {
-                            if (prop.m_prop != null)
-                            {
-                                if (prop.m_prop.name == "New Street Light")
-                                {
-                                    positions[count] = prop.m_position;
-                                    angles[count] = prop.m_angle;
-                                    count++;
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
 

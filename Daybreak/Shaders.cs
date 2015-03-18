@@ -3,6 +3,346 @@
     public static class Shaders
     {
 
+        public static readonly string buildingGlowPP_Depth = @"// Compiled shader for all platforms, uncompressed size: 9.0KB
+
+// Skipping shader variants that would not be included into build of current scene.
+
+Shader ""BuildingGlowPostProcessDepth"" {
+Properties {
+ _MainTex (""Base (RGB)"", 2D) = ""white"" { }
+ _GlowTex (""Glow"", 2D) = ""white"" { }
+ _GlowColor (""Glow color"", Color) = (1,1,0,1)
+ _GlowIntensity (""Glow intensity"", Float) = 0
+}
+SubShader { 
+ LOD 100
+ Tags { ""RenderType""=""Opaque"" }
+
+
+ // Stats for Vertex shader:
+ //       d3d11 : 5 math
+ //    d3d11_9x : 5 math
+ //        d3d9 : 7 math
+ //        gles : 1 math
+ //       gles3 : 1 math
+ //       metal : 3 math
+ //      opengl : 1 math
+ // Stats for Fragment shader:
+ //        d3d9 : 3 math
+ //       metal : 1 math
+ Pass {
+  Tags { ""RenderType""=""Opaque"" }
+  Fog { Mode Off }
+  GpuProgramID 51334
+Program ""vp"" {
+SubProgram ""opengl "" {
+// Stats: 1 math
+""!!GLSL
+#ifdef VERTEX
+
+uniform vec4 _MainTex_ST;
+varying vec2 xlv_TEXCOORD0;
+varying vec2 xlv_TEXCOORD1;
+void main ()
+{
+  vec2 tmpvar_1;
+  gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
+  xlv_TEXCOORD0 = ((gl_MultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  xlv_TEXCOORD1 = tmpvar_1;
+}
+
+
+#endif
+#ifdef FRAGMENT
+void main ()
+{
+  gl_FragData[0] = vec4(0.0, 0.0, 0.0, 0.0);
+}
+
+
+#endif
+""
+}
+SubProgram ""d3d9 "" {
+// Stats: 7 math
+Bind ""vertex"" Vertex
+Bind ""texcoord"" TexCoord0
+Matrix 0 [glstate_matrix_mvp]
+Vector 4 [_MainTex_ST]
+""vs_2_0
+dcl_position v0
+dcl_texcoord v1
+dp4 oPos.x, c0, v0
+dp4 oPos.y, c1, v0
+mad oT0.xy, v1, c4, c4.zwzw
+dp4 r0.z, c2, v0
+dp4 r0.w, c3, v0
+mov oPos.zw, r0
+mov oT1.xy, r0.zwzw
+
+""
+}
+SubProgram ""d3d11 "" {
+// Stats: 5 math
+Bind ""vertex"" Vertex
+Bind ""texcoord"" TexCoord0
+ConstBuffer ""$Globals"" 144
+Vector 128 [_MainTex_ST]
+ConstBuffer ""UnityPerDraw"" 336
+Matrix 0 [glstate_matrix_mvp]
+BindCB  ""$Globals"" 0
+BindCB  ""UnityPerDraw"" 1
+""vs_4_0
+eefiecedkmmldncbmghhlgegjpkhhoaachjnibnmabaaaaaaceacaaaaadaaaaaa
+cmaaaaaaiaaaaaaapaaaaaaaejfdeheoemaaaaaaacaaaaaaaiaaaaaadiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadadaaaafaepfdejfeejepeoaafeeffiedepepfceeaaklkl
+epfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaaaaaaaaaaabaaaaaaadaaaaaa
+aaaaaaaaapaaaaaafmaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaa
+fmaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaaamapaaaafdfgfpfaepfdejfe
+ejepeoaafeeffiedepepfceeaaklklklfdeieefccmabaaaaeaaaabaaelaaaaaa
+fjaaaaaeegiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaaabaaaaaaaeaaaaaa
+fpaaaaadpcbabaaaaaaaaaaafpaaaaaddcbabaaaabaaaaaaghaaaaaepccabaaa
+aaaaaaaaabaaaaaagfaaaaaddccabaaaabaaaaaagiaaaaacabaaaaaadiaaaaai
+pcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaabaaaaaaabaaaaaadcaaaaak
+pcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaa
+aaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaacaaaaaakgbkbaaa
+aaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaaabaaaaaa
+adaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaaldccabaaaabaaaaaa
+egbabaaaabaaaaaaegiacaaaaaaaaaaaaiaaaaaaogikcaaaaaaaaaaaaiaaaaaa
+doaaaaab""
+}
+SubProgram ""gles "" {
+// Stats: 1 math
+""!!GLES
+
+
+#ifdef VERTEX
+
+attribute vec4 _glesVertex;
+attribute vec4 _glesMultiTexCoord0;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _MainTex_ST;
+varying mediump vec2 xlv_TEXCOORD0;
+varying highp vec2 xlv_TEXCOORD1;
+void main ()
+{
+  mediump vec2 tmpvar_1;
+  highp vec2 tmpvar_2;
+  highp vec2 tmpvar_3;
+  tmpvar_3 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  tmpvar_1 = tmpvar_3;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD1 = tmpvar_2;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+void main ()
+{
+  gl_FragData[0] = vec4(0.0, 0.0, 0.0, 0.0);
+}
+
+
+
+#endif""
+}
+SubProgram ""d3d11_9x "" {
+// Stats: 5 math
+Bind ""vertex"" Vertex
+Bind ""texcoord"" TexCoord0
+ConstBuffer ""$Globals"" 144
+Vector 128 [_MainTex_ST]
+ConstBuffer ""UnityPerDraw"" 336
+Matrix 0 [glstate_matrix_mvp]
+BindCB  ""$Globals"" 0
+BindCB  ""UnityPerDraw"" 1
+""vs_4_0_level_9_1
+eefiecedhjdjdihdmlmlbbejnaleaaloeblmclmlabaaaaaabaadaaaaaeaaaaaa
+daaaaaaabiabaaaaemacaaaakaacaaaaebgpgodjoaaaaaaaoaaaaaaaaaacpopp
+kaaaaaaaeaaaaaaaacaaceaaaaaadmaaaaaadmaaaaaaceaaabaadmaaaaaaaiaa
+abaaabaaaaaaaaaaabaaaaaaaeaaacaaaaaaaaaaaaaaaaaaaaacpoppbpaaaaac
+afaaaaiaaaaaapjabpaaaaacafaaabiaabaaapjaaeaaaaaeaaaaadoaabaaoeja
+abaaoekaabaaookaafaaaaadaaaaapiaaaaaffjaadaaoekaaeaaaaaeaaaaapia
+acaaoekaaaaaaajaaaaaoeiaaeaaaaaeaaaaapiaaeaaoekaaaaakkjaaaaaoeia
+aeaaaaaeaaaaapiaafaaoekaaaaappjaaaaaoeiaaeaaaaaeaaaaadmaaaaappia
+aaaaoekaaaaaoeiaabaaaaacaaaaammaaaaaoeiappppaaaafdeieefccmabaaaa
+eaaaabaaelaaaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaa
+abaaaaaaaeaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaaddcbabaaaabaaaaaa
+ghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaaddccabaaaabaaaaaagiaaaaac
+abaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaabaaaaaa
+abaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaaagbabaaa
+aaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaa
+acaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaaaaaaaaa
+egiocaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaal
+dccabaaaabaaaaaaegbabaaaabaaaaaaegiacaaaaaaaaaaaaiaaaaaaogikcaaa
+aaaaaaaaaiaaaaaadoaaaaabejfdeheoemaaaaaaacaaaaaaaiaaaaaadiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadadaaaafaepfdejfeejepeoaafeeffiedepepfceeaaklkl
+epfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaaaaaaaaaaabaaaaaaadaaaaaa
+aaaaaaaaapaaaaaafmaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaa
+fmaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaaamapaaaafdfgfpfaepfdejfe
+ejepeoaafeeffiedepepfceeaaklklkl""
+}
+SubProgram ""gles3 "" {
+// Stats: 1 math
+""!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+
+in vec4 _glesVertex;
+in vec4 _glesMultiTexCoord0;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _MainTex_ST;
+out mediump vec2 xlv_TEXCOORD0;
+out highp vec2 xlv_TEXCOORD1;
+void main ()
+{
+  mediump vec2 tmpvar_1;
+  highp vec2 tmpvar_2;
+  highp vec2 tmpvar_3;
+  tmpvar_3 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  tmpvar_1 = tmpvar_3;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD1 = tmpvar_2;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+
+layout(location=0) out mediump vec4 _glesFragData[4];
+void main ()
+{
+  _glesFragData[0] = vec4(0.0, 0.0, 0.0, 0.0);
+}
+
+
+
+#endif""
+}
+SubProgram ""metal "" {
+// Stats: 3 math
+Bind ""vertex"" ATTR0
+Bind ""texcoord"" ATTR1
+ConstBuffer ""$Globals"" 80
+Matrix 0 [glstate_matrix_mvp]
+Vector 64 [_MainTex_ST]
+""metal_vs
+#include <metal_stdlib>
+using namespace metal;
+struct xlatMtlShaderInput {
+  float4 _glesVertex [[attribute(0)]];
+  float4 _glesMultiTexCoord0 [[attribute(1)]];
+};
+struct xlatMtlShaderOutput {
+  float4 gl_Position [[position]];
+  half2 xlv_TEXCOORD0;
+  float2 xlv_TEXCOORD1;
+};
+struct xlatMtlShaderUniform {
+  float4x4 glstate_matrix_mvp;
+  float4 _MainTex_ST;
+};
+vertex xlatMtlShaderOutput xlatMtlMain (xlatMtlShaderInput _mtl_i [[stage_in]], constant xlatMtlShaderUniform& _mtl_u [[buffer(0)]])
+{
+  xlatMtlShaderOutput _mtl_o;
+  half2 tmpvar_1;
+  float2 tmpvar_2;
+  float2 tmpvar_3;
+  tmpvar_3 = ((_mtl_i._glesMultiTexCoord0.xy * _mtl_u._MainTex_ST.xy) + _mtl_u._MainTex_ST.zw);
+  tmpvar_1 = half2(tmpvar_3);
+  _mtl_o.gl_Position = (_mtl_u.glstate_matrix_mvp * _mtl_i._glesVertex);
+  _mtl_o.xlv_TEXCOORD0 = tmpvar_1;
+  _mtl_o.xlv_TEXCOORD1 = tmpvar_2;
+  return _mtl_o;
+}
+
+""
+}
+}
+Program ""fp"" {
+SubProgram ""opengl "" {
+""!!GLSL""
+}
+SubProgram ""d3d9 "" {
+// Stats: 3 math
+""ps_2_0
+dcl t1.xy
+rcp r0.w, t1.y
+mul_pp r0, r0.w, t1.x
+mov_pp oC0, r0
+
+""
+}
+SubProgram ""d3d11 "" {
+""ps_4_0
+eefiecedbiflgegpckmgpaphhcfpfmnfcmifolcaabaaaaaabaabaaaaadaaaaaa
+cmaaaaaajmaaaaaanaaaaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaafmaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadaaaaaafmaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+amaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
+cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcdiaaaaaaeaaaaaaaaoaaaaaa
+gfaaaaadpccabaaaaaaaaaaadgaaaaaipccabaaaaaaaaaaaaceaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaadoaaaaab""
+}
+SubProgram ""gles "" {
+""!!GLES""
+}
+SubProgram ""d3d11_9x "" {
+""ps_4_0_level_9_1
+eefiecedfndfemipamadjlmifjbednefocpmgiejabaaaaaahiabaaaaaeaaaaaa
+daaaaaaajeaaaaaaneaaaaaaeeabaaaaebgpgodjfmaaaaaafmaaaaaaaaacpppp
+diaaaaaaceaaaaaaaaaaceaaaaaaceaaaaaaceaaaaaaceaaaaaaceaaaaacpppp
+fbaaaaafaaaaapkaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaacaaaacpia
+aaaaaakaabaaaaacaaaicpiaaaaaoeiappppaaaafdeieefcdiaaaaaaeaaaaaaa
+aoaaaaaagfaaaaadpccabaaaaaaaaaaadgaaaaaipccabaaaaaaaaaaaaceaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadoaaaaabejfdeheogiaaaaaaadaaaaaa
+aiaaaaaafaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaafmaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadaaaaaafmaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaamaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
+aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl""
+}
+SubProgram ""gles3 "" {
+""!!GLES3""
+}
+SubProgram ""metal "" {
+// Stats: 1 math
+""metal_fs
+#include <metal_stdlib>
+using namespace metal;
+struct xlatMtlShaderInput {
+};
+struct xlatMtlShaderOutput {
+  half4 _glesFragData_0 [[color(0)]];
+};
+struct xlatMtlShaderUniform {
+};
+fragment xlatMtlShaderOutput xlatMtlMain (xlatMtlShaderInput _mtl_i [[stage_in]], constant xlatMtlShaderUniform& _mtl_u [[buffer(0)]])
+{
+  xlatMtlShaderOutput _mtl_o;
+  _mtl_o._glesFragData_0 = half4(float4(0.0, 0.0, 0.0, 0.0));
+  return _mtl_o;
+}
+
+""
+}
+}
+ }
+}
+}";
+
         public static readonly string buildingBlurPP_V3 = @"// Compiled shader for all platforms, uncompressed size: 15.7KB
 
 // Skipping shader variants that would not be included into build of current scene.

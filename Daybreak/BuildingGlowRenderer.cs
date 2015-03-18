@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using ColossalFramework;
 using UnityEngine;
 
@@ -44,13 +45,14 @@ namespace Daybreak
         public float glowIntensity = 0.4f;
         public Color glowColor = Color.white;
         public float blurFactor = 1.0f;
-
-        public bool debugMode = false;
+        public int blurPasses = 5;
 
         private int blurDownscale = 4;
 
         private int buildingsCullingMask = 0;
         private int occludersCullingMask = 0;
+
+        private MethodInfo renderManagerLateUpdate;
 
         void FadeInBuildingLights()
         {
@@ -75,7 +77,7 @@ namespace Daybreak
             var mat = new Material(Shaders.buildingReplacementV2);
             buildingWindowsReplacement = mat.shader;
 
-            buildingsGlowPP = new Material(Shaders.buildingsGlowPPv2);
+            buildingsGlowPP = new Material(Shaders.buildingsGlowPP);
             glowBlurPP = new Material(Shaders.glowBlurPP);
 
             int w = Camera.main.pixelWidth/blurDownscale;
@@ -99,6 +101,8 @@ namespace Daybreak
             occludersCullingMask |= 1 << LayerMask.NameToLayer("Citizens");
             occludersCullingMask |= 1 << LayerMask.NameToLayer("PowerLines");
             occludersCullingMask |= 1 << LayerMask.NameToLayer("Road");
+
+            renderManagerLateUpdate = typeof(RenderManager).GetMethod("LateUpdate", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
         void LateUpdate()
@@ -160,18 +164,18 @@ namespace Daybreak
                 return;
             }
 
-            glowBlurPP.SetVector("_BlurDir", new Vector4(blurFactor, 0.0f, 0.0f, 0.0f));
-            Graphics.Blit(rt, rtBlurH, glowBlurPP);
+            RenderTexture inBlur = rt;
 
-            glowBlurPP.SetVector("_BlurDir", new Vector4(0.0f, blurFactor, 0.0f, 0.0f));
-            Graphics.Blit(rtBlurH, rtBlurV, glowBlurPP);
-
-            if (debugMode)
+            for (int i = 0; i < blurPasses; i++)
             {
-                Graphics.Blit(rtBlurV, dst);
-                return;
-            }
+                glowBlurPP.SetVector("_BlurDir", new Vector4(blurFactor, 0.0f, 0.0f, 0.0f));
+                Graphics.Blit(inBlur, rtBlurH, glowBlurPP);
 
+                glowBlurPP.SetVector("_BlurDir", new Vector4(0.0f, blurFactor, 0.0f, 0.0f));
+                Graphics.Blit(rtBlurH, rtBlurV, glowBlurPP);
+                inBlur = rtBlurV;
+            }
+            
             buildingsGlowPP.SetTexture("_GlowTex", rtBlurV);
             buildingsGlowPP.SetFloat("_GlowIntensity", glowIntensity * fadingBuildingLightsFactor);
             buildingsGlowPP.SetColor("_GlowColor", glowColor);
@@ -185,12 +189,13 @@ namespace Daybreak
             dummyCamera.backgroundColor = Color.black;
 
             dummyCamera.targetTexture = rt;
-            dummyCamera.cullingMask = occludersCullingMask;
-            dummyCamera.Render();
-            dummyCamera.clearFlags = CameraClearFlags.Nothing;
+          //  dummyCamera.cullingMask = occludersCullingMask;
+         //   renderManagerLateUpdate.Invoke(renderManager, new object[] {});
+          //  dummyCamera.Render();
+          //  dummyCamera.clearFlags = CameraClearFlags.Nothing;
 
-            RenderTexture.active = rt;
-            GL.Clear(false, true, Color.black);
+           // RenderTexture.active = rt;
+          // GL.Clear(false, true, Color.black);
 
             BeginRenderingImpl(cameraInfo);
             PrepareRenderGroups(cameraInfo);
@@ -316,7 +321,6 @@ namespace Daybreak
         private void BuildingAIRenderInstance(BuildingAI buildingAI, RenderManager.CameraInfo cameraInfo, ushort buildingID, ref Building data, int layerMask, ref RenderManager.Instance instance)
         {
             BuildingAIRenderMeshes(buildingAI, cameraInfo, buildingID, ref data, layerMask, ref instance);
-            buildingAI.RenderProps(cameraInfo, buildingID, ref data, layerMask, ref instance);
         }
 
         // 
@@ -467,41 +471,6 @@ namespace Daybreak
                             CODebugBase<LogChannel>.Error(LogChannel.Core, "Invalid list detected!\n" + Environment.StackTrace);
                             break;
                         }
-                    }
-                }
-            }
-            int num12 = PrefabCollection<BuildingInfo>.PrefabCount();
-            for (int l = 0; l < num12; l++)
-            {
-                BuildingInfo prefab = PrefabCollection<BuildingInfo>.GetPrefab((uint)l);
-                if (prefab != null)
-                {
-                    prefab.UpdatePrefabInstances();
-                    if (prefab.m_lodCount != 0)
-                    {
-                        Building.RenderLod(cameraInfo, prefab);
-                    }
-                    if (prefab.m_subMeshes != null)
-                    {
-                        for (int m = 0; m < prefab.m_subMeshes.Length; m++)
-                        {
-                            BuildingInfoBase subInfo = prefab.m_subMeshes[m].m_subInfo;
-                            if (subInfo.m_lodCount != 0)
-                            {
-                                Building.RenderLod(cameraInfo, subInfo);
-                            }
-                        }
-                    }
-                }
-            }
-            if (buildingManager.m_common != null && buildingManager.m_common.m_subInfos != null)
-            {
-                for (int n = 0; n < buildingManager.m_common.m_subInfos.Length; n++)
-                {
-                    BuildingInfoBase buildingInfoBase = buildingManager.m_common.m_subInfos[n];
-                    if (buildingInfoBase.m_lodCount != 0)
-                    {
-                        Building.RenderLod(cameraInfo, buildingInfoBase);
                     }
                 }
             }

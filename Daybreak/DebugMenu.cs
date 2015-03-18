@@ -15,12 +15,12 @@ namespace Daybreak
         private Vector2 scrollViewPos = Vector2.zero;
 
         private Timer timer;
-        private HeadlightsController headlights;
      //   private FogEffect fogEffect;
         private BuildingGlowRenderer glowRenderer;
 
         void Awake()
         {
+            name = "debug:ToggleUI:Daybreak debug";
             timer = GetComponent<Timer>();
         }
 
@@ -30,6 +30,11 @@ namespace Daybreak
             {
                 showUI = !showUI;
             }
+        }
+
+        void ToggleUI()
+        {
+            showUI = !showUI;
         }
 
         void OnGUI()
@@ -44,15 +49,6 @@ namespace Daybreak
 
         void DrawDebugWindow(int wnd)
         {
-            if (headlights == null)
-            {
-                headlights = GetComponent<HeadlightsController>();
-            }
-
-            if (headlights == null)
-            {
-                return;
-            }
 
           /*  if (fogEffect == null)
             {
@@ -91,9 +87,10 @@ namespace Daybreak
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Debug glow renderer");
-            glowRenderer.debugMode = GUILayout.Toggle(glowRenderer.debugMode, "");
+            GUILayout.Label("Glow blur passes");
+            glowRenderer.blurPasses = (int)GUILayout.HorizontalSlider(glowRenderer.blurPasses, 0.0f, 8.0f);
             GUILayout.EndHorizontal();
+
             /* GUILayout.Label("Lights");
 
 
@@ -210,7 +207,6 @@ namespace Daybreak
             VehicleManager vManager = Singleton<VehicleManager>.instance;
             GUILayout.Label("Vehicle count (ItemCount): " + vManager.m_vehicles.ItemCount());
             GUILayout.Label("Vehicle count: " + vManager.m_vehicleCount);
-            GUILayout.Label("Active headlights: " + headlights.activeHeadlights.Count);
 
          
             var loadedProps = PrefabCollection<PropInfo>.LoadedCount();
