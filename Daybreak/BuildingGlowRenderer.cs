@@ -77,7 +77,7 @@ namespace Daybreak
             var mat = new Material(Shaders.buildingReplacementV2);
             buildingWindowsReplacement = mat.shader;
 
-            buildingsGlowPP = new Material(Shaders.buildingsGlowPP);
+            buildingsGlowPP = new Material(Shaders.buildingGlowPPv5);
             glowBlurPP = new Material(Shaders.glowBlurPP);
 
             int w = Camera.main.pixelWidth/blurDownscale;
@@ -189,13 +189,13 @@ namespace Daybreak
             dummyCamera.backgroundColor = Color.black;
 
             dummyCamera.targetTexture = rt;
-          //  dummyCamera.cullingMask = occludersCullingMask;
-         //   renderManagerLateUpdate.Invoke(renderManager, new object[] {});
-          //  dummyCamera.Render();
-          //  dummyCamera.clearFlags = CameraClearFlags.Nothing;
+            dummyCamera.cullingMask = occludersCullingMask;
+            renderManagerLateUpdate.Invoke(renderManager, new object[] {});
+            dummyCamera.Render();
+            dummyCamera.clearFlags = CameraClearFlags.Nothing;
 
-           // RenderTexture.active = rt;
-          // GL.Clear(false, true, Color.black);
+            RenderTexture.active = rt;
+           GL.Clear(false, true, Color.black);
 
             BeginRenderingImpl(cameraInfo);
             PrepareRenderGroups(cameraInfo);
